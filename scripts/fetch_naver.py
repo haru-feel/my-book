@@ -11,8 +11,8 @@ BOOKS_SEED = [
         "id": "book-1",
         "bookk_id": "6b0590cade1ad179312a4036",
         "bookk_url": "https://bookk.co.kr/bookStore/6b0590cade1ad179312a4036",
-        "query": "도서 1 제목을 입력하세요",
-        "fallback_title": "첫 번째 책 (제목 수정 필요)",
+        "query": "말이 줄어든 자리에 남는 것들",
+        "fallback_title": "말이 줄어든 자리에 남는 것들",
         "author": "김현승",
         "cover_url": "",
         "summary": "여백과 사유가 담긴 첫 번째 도서입니다. 부크크 상세 페이지에서 전체 소개와 구매 정보를 확인하실 수 있습니다.",
@@ -26,8 +26,8 @@ BOOKS_SEED = [
         "id": "book-2",
         "bookk_id": "67b32cdd74f2ff3eee47f6b1",
         "bookk_url": "https://bookk.co.kr/bookStore/67b32cdd74f2ff3eee47f6b1",
-        "query": "도서 2 제목을 입력하세요",
-        "fallback_title": "두 번째 책 (제목 수정 필요)",
+        "query": "멈춰서 돌아본다",
+        "fallback_title": "멈춰서 돌아본다",
         "author": "김현승",
         "cover_url": "",
         "summary": "일상의 결을 세밀하게 들여다보는 두 번째 도서입니다.",
@@ -40,8 +40,8 @@ BOOKS_SEED = [
         "id": "book-3",
         "bookk_id": "646abe734222b24502d39197",
         "bookk_url": "https://bookk.co.kr/bookStore/646abe734222b24502d39197",
-        "query": "도서 3 제목을 입력하세요",
-        "fallback_title": "세 번째 책 (제목 수정 필요)",
+        "query": "하루가 행복할 수 있다면",
+        "fallback_title": "하루가 행복할 수 있다면",
         "author": "김현승",
         "cover_url": "",
         "summary": "깊은 호흡으로 읽어 내려가는 세 번째 도서입니다.",
@@ -105,7 +105,9 @@ def build_dataset() -> dict:
 
     for seed in BOOKS_SEED:
         prev_book = existing_map.get(seed["id"], {})
-        search_q = seed["query"] if "제목을 입력하세요" not in seed["query"] else seed["fallback_title"]
+        search_q = seed["query"] if "말이 줄어든 자리에 남는 것들" not in seed["query"] else seed["fallback_title"]
+        search_q = seed["query"] if "멈춰서 돌아본다" not in seed["query"] else seed["fallback_title"]
+        search_q = seed["query"] if "하루가 행복할 수 있다면" not in seed["query"] else seed["fallback_title"]
 
         book_api = naver_search("book.json", search_q, display=3, sort="sim")
         blog_api = naver_search("blog.json", f'"{search_q}" 후기 OR 리뷰', display=8, sort="date")
