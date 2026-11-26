@@ -1,7 +1,9 @@
 import html
 import json
 import os
+import random
 import re
+import time
 import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
@@ -52,123 +54,144 @@ BOOKS_SEED = [
     }
 ]
 
+HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/131.0.0.0 Safari/537.36"
+    ),
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.8",
+    "Referer": "https://www.naver.com/"
+}
 
-def clean_html(raw_text: str) -> str:
-    if not raw_text:
+
+def clean_text(raw_html: str) -> str:
+    if not raw_html:
         return ""
-    no_tags = re.sub(r"<[^>]+>", "", raw_text)
-    return html.unescape(no_tags).strip()
+    no_tags = re.sub(r"<[^>]+>", " ", raw_html)
+    unescaped = html.unescape(no_tags)
+    return re.sub(r"\s+", " ", unescaped).strip()
 
 
-def naver_search(endpoint: str, query: str, display: int = 6, sort: str = "sim") -> dict:
-    client_id = os.environ.get("NAVER_CLIENT_ID", "").strip()
-    client_secret = os.environ.get("NAVER_CLIENT_SECRET", "").strip()
-    if not client_id or not client_secret:
-        return {"items": []}
+def fetch_html(url: str, timeout: int = 15) -> str:
+    req = urllib.request.Request(url, headers=HEADERS)
+    with urllib.request.urlopen(req, timeout=timeout) as resp:
+        charset = resp.headers.get_content_charset() or "utf-8"
+        return resp.read().decode(charset, errors="replace")
 
-    params = urllib.parse.urlencode({
-        "query": query,
-        "display": display,
-        "sort": sort
-    })
-    url = f"https://openapi.naver.com/v1/search/{endpoint}?{params}"
-    req = urllib.request.Request(
-        url,
-        headers={
-            "X-Naver-Client-Id": client_id,
-            "X-Naver-Client-Secret": client_secret
-        }
+
+def parse_naver_results(page_html: str, limit: int = 6, domain_filter: str | None = None) -> list[dict]:
+    """네이버 검색 HTML에서 외부 링크와 제목·요약 스니펫을 추출합니다."""
+    results: list[dict] = []
+    seen_urls: set[str] = set()
+
+    # 일반 검색 결과 카드 내 링크 및 주변 텍스트 추출
+    anchor_pattern = re.compile(
+        r'<a[^>]+href=["\'](https?://[^"\']+)["\'][^>]*>(.*?)</a>',
+        re.IGNORECASE | re.DOTALL
     )
+
+    for match in anchor_pattern.finditer(page_html):
+        href = html.unescape(match.group(1)).strip()
+        title = clean_text(match.group(2))
+
+        if not title or len(title) < 4:
+            continue
+        if "naver.com" in href or "search.naver.com" in href:
+            continue
+        if domain_filter and domain_filter not in href:
+            continue
+        if href in seen_urls:
+            continue
+
+        # 링크 주변 800자 범위에서 요약 문구 추정
+        start = max(0, match.start() - 200)
+        end = min(len(page_html), match.end() + 800)
+        context_block = clean_text(page_html[start:end])
+        snippet = context_block.replace(title, "", 1).strip()
+        if len(snippet) > 180:
+            snippet = snippet[:180].rsplit(" ", 1)[0] + "..."
+
+        seen_urls.add(href)
+        results.append({
+            "title": title,
+            "snippet": snippet or "네이버 검색 결과에서 확인된 항목입니다.",
+            "blogger": "네이버 블로그" if domain_filter == "blog.naver.com" else "네이버 검색",
+            "date": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+            "link": href
+        })
+
+        if len(results) >= limit:
+            break
+
+    return results
+
+
+def search_naver_web(query: str, where: str = "nexearch", limit: int = 6, domain_filter: str | None = None) -> list[dict]:
+    encoded_q = urllib.parse.quote(query)
+    url = f"https://search.naver.com/search.naver?where={where}&query={encoded_q}"
     try:
-        with urllib.request.urlopen(req, timeout=15) as resp:
-            return json.loads(resp.read().decode("utf-8"))
+        page_html = fetch_html(url)
+        return parse_naver_results(page_html, limit=limit, domain_filter=domain_filter)
     except Exception as e:
-        print(f"[WARN] Naver API error ({endpoint}, {query}): {e}")
-        return {"items": []}
+        print(f"[WARN] Failed to fetch Naver search ({query}, {where}): {e}")
+        return []
 
 
 def build_dataset() -> dict:
     os.makedirs("data", exist_ok=True)
-    existing_map = {}
     output_path = "data/books_data.json"
+    existing_map: dict[str, dict] = {}
 
     if os.path.exists(output_path):
         try:
             with open(output_path, "r", encoding="utf-8") as f:
                 prev = json.load(f)
                 for b in prev.get("books", []):
-                    existing_map[b.get("id")] = b
-        except Exception:
-            pass
+                    if b.get("id"):
+                        existing_map[b["id"]] = b
+        except Exception as e:
+            print(f"[WARN] Could not read existing {output_path}: {e}")
 
     books_output = []
 
     for seed in BOOKS_SEED:
         prev_book = existing_map.get(seed["id"], {})
-        search_q = seed["query"] if "말이 줄어든 자리에 남는 것들" not in seed["query"] else seed["fallback_title"]
-        search_q = seed["query"] if "멈춰서 돌아본다" not in seed["query"] else seed["fallback_title"]
-        search_q = seed["query"] if "하루가 행복할 수 있다면" not in seed["query"] else seed["fallback_title"]
+        search_q = seed["query"] if "제목을 입력하세요" not in seed["query"] else seed["fallback_title"]
 
-        book_api = naver_search("book.json", search_q, display=3, sort="sim")
-        blog_api = naver_search("blog.json", f'"{search_q}" 후기 OR 리뷰', display=8, sort="date")
-        news_api = naver_search("news.json", f'"{search_q}"', display=6, sort="date")
+        # 1) 블로그 리뷰 수집
+        blog_items = search_naver_web(
+            f'"{search_q}" 후기 OR 리뷰',
+            where="blog",
+            limit=6,
+            domain_filter="blog.naver.com"
+        )
+        if not blog_items:
+            blog_items = search_naver_web(f'"{search_q}" 리뷰', where="nexearch", limit=6)
 
-        title = seed["fallback_title"]
-        publisher = "부크크(bookk)"
-        pubdate = ""
-        isbn = ""
-        cover_url = seed["cover_url"]
-        description = seed["summary"]
+        time.sleep(random.uniform(1.0, 2.0))
 
-        if book_api.get("items"):
-            top_book = book_api["items"][0]
-            api_title = clean_html(top_book.get("title", ""))
-            if api_title:
-                title = api_title
-            publisher = clean_html(top_book.get("publisher", "")) or publisher
-            pubdate = top_book.get("pubdate", "")
-            isbn = top_book.get("isbn", "")
-            cover_url = top_book.get("image") or cover_url
-            api_desc = clean_html(top_book.get("description", ""))
-            if api_desc:
-                description = api_desc
+        # 2) 언론 보도 수집
+        news_items = search_naver_web(f'"{search_q}"', where="news", limit=5)
 
-        reviews = []
-        for item in blog_api.get("items", []):
-            reviews.append({
-                "title": clean_html(item.get("title", "")),
-                "snippet": clean_html(item.get("description", "")),
-                "blogger": clean_html(item.get("bloggername", "네이버 블로그")),
-                "date": item.get("postdate", ""),
-                "link": item.get("link", "")
-            })
+        time.sleep(random.uniform(1.0, 2.0))
 
-        press = []
-        for item in news_api.get("items", []):
-            press.append({
-                "title": clean_html(item.get("title", "")),
-                "snippet": clean_html(item.get("description", "")),
-                "date": item.get("pubDate", ""),
-                "link": item.get("originallink") or item.get("link", "")
-            })
-
-        # API 결과가 비어 있을 때 기존 데이터 보존
-        if not reviews and prev_book.get("reviews"):
-            reviews = prev_book["reviews"]
-        if not press and prev_book.get("press"):
-            press = prev_book["press"]
+        # 수집 실패 시 기존 저장된 항목 유지
+        reviews = blog_items if blog_items else prev_book.get("reviews", [])
+        press = news_items if news_items else prev_book.get("press", [])
 
         books_output.append({
             "id": seed["id"],
             "bookk_id": seed["bookk_id"],
             "bookk_url": seed["bookk_url"],
-            "title": title,
+            "title": prev_book.get("title") if "제목 수정 필요" in seed["fallback_title"] and prev_book.get("title") and "제목 반영 예정" not in prev_book.get("title") else (search_q if "제목을 입력하세요" not in seed["query"] else seed["fallback_title"]),
             "author": seed["author"],
-            "publisher": publisher,
-            "pubdate": pubdate,
-            "isbn": isbn,
-            "cover_url": cover_url,
-            "summary": description,
+            "publisher": "부크크(bookk)",
+            "pubdate": prev_book.get("pubdate", ""),
+            "isbn": prev_book.get("isbn", ""),
+            "cover_url": seed["cover_url"] or prev_book.get("cover_url", ""),
+            "summary": seed["summary"],
             "toc": seed["toc"],
             "excerpts": seed["excerpts"],
             "reviews": reviews,
@@ -182,7 +205,7 @@ def build_dataset() -> dict:
 
 
 if __name__ == "__main__":
-    result = build_dataset()
+    dataset = build_dataset()
     with open("data/books_data.json", "w", encoding="utf-8") as f:
-        json.dump(result, f, ensure_ascii=False, indent=2)
-    print("Saved data/books_data.json successfully.")
+        json.dump(dataset, f, ensure_ascii=False, indent=2)
+    print("Updated data/books_data.json without Naver API keys.")
