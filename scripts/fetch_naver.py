@@ -15,10 +15,10 @@ BOOKS_SEED = [
         "bookk_url": "https://bookk.co.kr/bookStore/6b0590cade1ad179312a4036",
         "stores": {
             "paper": [
-                {"name": "부크크", "url": "https://bookk.co.kr/bookStore/6b0590cade1ad179312a4036"}
+                {"name": "종이책(부크크)", "url": "https://bookk.co.kr/bookStore/6b0590cade1ad179312a4036"}
             ],
             "ebook": [
-                {"name": "부크크 eBook", "url": "https://bookk.co.kr/bookStore/6b07a74913cd34e08772d3cc"}
+                {"name": "E-Book(부크크)", "url": "https://bookk.co.kr/bookStore/6b07a74913cd34e08772d3cc"}
             ]
         },
         "query": "말이 줄어든 자리에 남는 것들",
@@ -106,13 +106,13 @@ BOOKS_SEED = [
         "stores": {
             "paper": [
                 {
-                    "name": "네이버 도서",
+                    "name": "종이책(교보문고 등)",
                     "url": "https://search.shopping.naver.com/book/search?bookTabType=ALL&pageIndex=1&pageSize=40&query=%EB%A9%88%EC%B6%B0%EC%84%9C+%EB%8F%8C%EC%95%84%EB%B3%B8%EB%8B%A4&sort=REL&prevQuery=%EB%A9%88%EC%B6%B0%EC%84%9C%EB%8F%8C%EC%95%84%EB%B3%B8%EB%8B%A4"
                 }
             ],
             "ebook": [
                 {
-                    "name": "YES24 eBook",
+                    "name": "E-Book(YES24)",
                     "url": "https://www.yes24.com/Product/Goods/142843232"
                 }
             ]
@@ -304,13 +304,13 @@ BOOKS_SEED = [
         "stores": {
             "paper": [
                 {
-                    "name": "네이버 도서",
+                    "name": "종이책(교보문고 등)",
                     "url": "https://search.shopping.naver.com/book/catalog/32492774157?cat_id=50011280&frm=MBOKPRO&query=%25ED%2595%2598%25EB%25A3%25A8%25EA%25B0%2580%2B%25ED%2596%2589%25EB%25B3%25B5%25ED%2595%25A0%2B%25EC%2588%2598%2B%25EC%259E%2588%25EB%258B%25A4%25EB%25A9%25B4&N"
                 }
             ],
             "ebook": [
                 {
-                    "name": "YES24 eBook",
+                    "name": "E-Book(YES24)",
                     "url": "https://www.yes24.com/Product/Goods/142763189"
                 }
             ]
