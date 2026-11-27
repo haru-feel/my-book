@@ -96,16 +96,41 @@ BOOK_CONTEXT_KEYWORDS = (
     "yes24", "알라딘", "교보문고"
 )
 
+BOOKK_NOISE_LINES = (
+    "책 소개", "책소개", "작품 소개", "작품소개", "목차", "차례",
+    "저자 소개", "저자소개", "출판사 서평", "출판사서평", "배송/반품/교환",
+    "장바구니", "바로구매", "찜하기", "공유하기", "더보기", "접기",
+    "부크크", "bookk", "로그인", "회원가입", "고객센터"
+)
+
 
 def clean_text(raw_html: str) -> str:
     if not raw_html:
         return ""
-    # 잘린 태그 조각(<div..., ...class="...">)까지 함께 제거
     no_tags = re.sub(r"<[^>]*>", " ", raw_html)
     no_broken_prefix = re.sub(r"^[^<]*>", " ", no_tags)
     unescaped = html.unescape(no_broken_prefix)
     cleaned = re.sub(r"(Keep에 바로가기|Keep에 저장|새 창 열림)", " ", unescaped)
     return re.sub(r"\s+", " ", cleaned).strip()
+
+
+def html_to_lines(raw_html: str) -> list[str]:
+    if not raw_html:
+        return []
+    with_breaks = re.sub(
+        r"<(?:/?(?:p|div|li|tr|h[1-6]|section|article)|br\s*/?)[^>]*>",
+        "\n",
+        raw_html,
+        flags=re.I
+    )
+    no_tags = re.sub(r"<[^>]+>", " ", with_breaks)
+    unescaped = html.unescape(no_tags)
+    lines = []
+    for raw in unescaped.splitlines():
+        line = re.sub(r"\s+", " ", raw).strip()
+        if line:
+            lines.append(line)
+    return lines
 
 
 def normalize_compact(text: str) -> str:
@@ -119,33 +144,117 @@ def fetch_html(url: str, timeout: int = 15) -> str:
         return resp.read().decode(charset, errors="replace")
 
 
-def extract_toc_from_html(page_html: str) -> list[str]:
-    candidates: list[str] = []
-    toc_block_match = re.search(r"(?:목차|차례)[\s\S]{0,4000}", page_html, re.IGNORECASE)
-    if toc_block_match:
-        block = toc_block_match.group(0)
-        block_with_breaks = re.sub(
-            r"<(?:/?(?:p|div|li|tr|h[1-6])|br\s*/?)[^>]*>",
-            "\n",
-            block,
-            flags=re.I
+def parse_next_data_from_html(page_html: str) -> dict:
+    """부크크 페이지에 __NEXT_DATA__ 등 JSON 데이터가 포함되어 있으면 파싱합니다."""
+    m = re.search(
+        r'<script[^>]+id=["\']__NEXT_DATA__["\'][^>]*>(.*?)</script>',
+        page_html,
+        re.IGNORECASE | re.DOTALL
+    )
+    if not m:
+        return {}
+    try:
+        return json.loads(m.group(1).strip())
+    except Exception:
+        return {}
+
+
+def find_text_fields_in_json(obj, target_keys: tuple[str, ...]) -> list[str]:
+    found: list[str] = []
+    if isinstance(obj, dict):
+        for k, v in obj.items():
+            lk = str(k).lower()
+            if any(tk in lk for tk in target_keys) and isinstance(v, str) and len(v.strip()) > 5:
+                found.append(v.strip())
+            else:
+                found.extend(find_text_fields_in_json(v, target_keys))
+    elif isinstance(obj, list):
+        for item in obj:
+            found.extend(find_text_fields_in_json(item, target_keys))
+    return found
+
+
+def extract_bookk_summary(page_html: str, next_data: dict, fallback_og_desc: str) -> str:
+    """부크크 상세 페이지에 등재된 책 소개 본문을 추출합니다."""
+    # 1) __NEXT_DATA__ 내 소개 필드 우선 확인
+    if next_data:
+        desc_candidates = find_text_fields_in_json(
+            next_data,
+            ("description", "introduce", "intro", "summary", "bookdesc", "content")
         )
-        plain_block = html.unescape(re.sub(r"<[^>]+>", " ", block_with_breaks))
-        for raw_line in plain_block.splitlines():
-            line = re.sub(r"\s+", " ", raw_line).strip()
-            if not line or line in ("목차", "차례"):
+        for cand in desc_candidates:
+            cleaned = "\n".join(html_to_lines(cand)) if "<" in cand else cand.strip()
+            if len(cleaned) >= 30 and not cleaned.endswith("..."):
+                return cleaned
+
+    # 2) HTML 본문 내 '책 소개' ~ '목차'/'저자 소개' 구간 추출
+    intro_match = re.search(
+        r"(?:책\s*소개|작품\s*소개)([\s\S]{20,5000}?)(?:목차|차례|저자\s*소개|출판사\s*서평|배송/반품|$)",
+        page_html,
+        re.IGNORECASE
+    )
+    if intro_match:
+        lines = html_to_lines(intro_match.group(1))
+        filtered = [
+            ln for ln in lines
+            if ln.lower() not in BOOKK_NOISE_LINES and len(ln) >= 2
+        ]
+        joined = "\n\n".join(filtered).strip()
+        if len(joined) >= 25:
+            return joined
+
+    return fallback_og_desc
+
+
+def extract_bookk_toc(page_html: str, next_data: dict) -> list[str]:
+    """부크크 상세 페이지에 등재된 목차(차례)를 추출합니다."""
+    # 1) __NEXT_DATA__ 내 목차 필드 우선 확인
+    if next_data:
+        toc_candidates = find_text_fields_in_json(
+            next_data,
+            ("toc", "tableofcontents", "contentslist", "index", "chapter")
+        )
+        for cand in toc_candidates:
+            raw_lines = html_to_lines(cand) if "<" in cand else cand.splitlines()
+            cleaned_lines = []
+            for ln in raw_lines:
+                line = re.sub(r"\s+", " ", ln).strip()
+                if not line or line.lower() in BOOKK_NOISE_LINES:
+                    continue
+                if 2 <= len(line) <= 100 and line not in cleaned_lines:
+                    cleaned_lines.append(line)
+            if len(cleaned_lines) >= 2:
+                return cleaned_lines[:40]
+
+    # 2) HTML 본문 내 '목차' 또는 '차례' ~ 다음 섹션 헤더 구간 추출
+    toc_block_match = re.search(
+        r"(?:목차|차례)([\s\S]{10,6000}?)(?:저자\s*소개|출판사\s*서평|책\s*속으로|배송/반품|관련\s*도서|리뷰|</section>|</article>|$)",
+        page_html,
+        re.IGNORECASE
+    )
+    if toc_block_match:
+        lines = html_to_lines(toc_block_match.group(1))
+        candidates: list[str] = []
+        for line in lines:
+            if line.lower() in BOOKK_NOISE_LINES:
                 continue
-            if 2 <= len(line) <= 90 and line not in candidates:
+            if 2 <= len(line) <= 100 and line not in candidates:
                 candidates.append(line)
-            if len(candidates) >= 20:
+            if len(candidates) >= 40:
                 break
-    return candidates
+        if candidates:
+            return candidates
+
+    return []
 
 
 def fetch_bookk_details(bookk_url: str) -> dict:
+    """부크크 상세 페이지에서 등재된 제목, 책 소개, 표지, 목차를 추출합니다."""
     info = {"title": "", "summary": "", "cover_url": "", "toc": []}
     try:
         page_html = fetch_html(bookk_url)
+        next_data = parse_next_data_from_html(page_html)
+
         og_title = re.search(r'<meta[^>]+property=["\']og:title["\'][^>]+content=["\']([^"\']+)["\']', page_html, re.I)
         og_desc = re.search(r'<meta[^>]+property=["\']og:description["\'][^>]+content=["\']([^"\']+)["\']', page_html, re.I)
         og_img = re.search(r'<meta[^>]+property=["\']og:image["\'][^>]+content=["\']([^"\']+)["\']', page_html, re.I)
@@ -153,15 +262,20 @@ def fetch_bookk_details(bookk_url: str) -> dict:
         if og_title:
             t = clean_text(og_title.group(1))
             info["title"] = re.sub(r"\s*\|\s*부크크.*$", "", t).strip()
+
+        fallback_og_desc = ""
         if og_desc:
             d = clean_text(og_desc.group(1))
             if len(d) > 15:
-                info["summary"] = d
+                fallback_og_desc = d
+
         if og_img:
             img_url = html.unescape(og_img.group(1)).strip()
             info["cover_url"] = ("https:" + img_url) if img_url.startswith("//") else img_url
 
-        info["toc"] = extract_toc_from_html(page_html)
+        info["summary"] = extract_bookk_summary(page_html, next_data, fallback_og_desc)
+        info["toc"] = extract_bookk_toc(page_html, next_data)
+
     except Exception as e:
         print(f"[WARN] Failed to fetch Bookk page ({bookk_url}): {e}")
     return info
@@ -181,7 +295,6 @@ def is_valid_book_item(
     combined = f"{title} {snippet}"
     compact_combined = normalize_compact(combined)
 
-    # 1) 지정된 책 제목 어구가 연속으로 포함되었는지 검사
     phrase_matched = any(
         normalize_compact(p) in compact_combined
         for p in required_phrases
@@ -190,7 +303,6 @@ def is_valid_book_item(
     if not phrase_matched:
         return False
 
-    # 2) 일반 문구와 겹칠 수 있는 제목은 작가명('김현승')이나 책/출판 관련 키워드 동반 필수
     if require_author_or_book:
         lower_combined = combined.lower()
         if not any(kw in lower_combined for kw in BOOK_CONTEXT_KEYWORDS):
@@ -282,11 +394,10 @@ def build_dataset() -> dict:
         bookk_info = fetch_bookk_details(seed["bookk_url"])
         time.sleep(random.uniform(0.8, 1.5))
 
-        resolved_title = (seed["query"] or seed["fallback_title"]).strip()
+        resolved_title = (bookk_info["title"] or seed["query"] or seed["fallback_title"]).strip()
         required_phrases = seed["required_phrases"]
         require_ctx = seed["require_author_or_book"]
 
-        # 1) 블로그 리뷰/소개 수집 (작가명 함께 검색해 정확도 향상)
         blog_items = search_naver_web(
             f'"{resolved_title}" "김현승"',
             required_phrases=required_phrases,
@@ -306,7 +417,6 @@ def build_dataset() -> dict:
 
         time.sleep(random.uniform(1.0, 2.0))
 
-        # 2) 언론 보도 수집
         news_items = search_naver_web(
             f'"{resolved_title}" "김현승"',
             required_phrases=required_phrases,
@@ -346,4 +456,4 @@ if __name__ == "__main__":
     dataset = build_dataset()
     with open("data/books_data.json", "w", encoding="utf-8") as f:
         json.dump(dataset, f, ensure_ascii=False, indent=2)
-    print("Cleanly updated data/books_data.json.")
+    print("Updated data/books_data.json with Bookk title, full summary, and TOC.")
