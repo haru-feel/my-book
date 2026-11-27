@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-26T09:13:45.469510+00:00",
+  "updated_at": "2026-11-27T04:52:21.465946+00:00",
   "books": [
     {
       "id": "book-1",
@@ -10,8 +10,8 @@
       "publisher": "부크크(bookk)",
       "pubdate": "",
       "isbn": "",
-      "cover_url": "",
-      "summary": "말의 여백과 무게가 담긴 도서입니다. 상세 페이지에서 전체 소개와 구매 정보를 확인하실 수 있습니다.",
+      "cover_url": "https://file.bookk.co.kr/books/20261125/6b052fe7de1ad179312721c8/thumbnails/1795595868514.jpg",
+      "summary": "우리는 얼마나 많은 말을 하며 살아왔을까. 나를 이해시키기 위해 설명하고, 오해받지 않기 위해 해명하고, 누군가에게 인정받기 위해 끊임없이 자신...",
       "toc": [
         "프롤로그 · 멈춤의 자리",
         "1장 · 조용히 쌓이는 시간",
@@ -24,83 +24,48 @@
       ],
       "reviews": [
         {
-          "title": "새 창 열림",
-          "snippet": "omp=\"Profile\">  KBR 코리아비즈니스리뷰 새 창 열림</s",
-          "blogger": "네이버 검색",
-          "date": "2026-11-26",
-          "link": "https://www.koreabizreview.com/"
-        },
-        {
-          "title": "2026.10.06. 새 창 열림",
-          "snippet": "ubtexts\">  www.koreabizreview.com <span class=\"sds-comps",
-          "blogger": "네이버 검색",
-          "date": "2026-11-26",
-          "link": "https://www.koreabizreview.com/articles/case-study-content-20261018-1mx6"
-        },
-        {
-          "title": "새 창 열림",
-          "snippet": "omp=\"Profile\">  커리어리 새 창 열림 </",
-          "blogger": "네이버 검색",
-          "date": "2026-11-26",
-          "link": "https://careerly.co.kr/"
-        },
-        {
-          "title": "careerly.co.kr › community 새 창 열림",
-          "snippet": "ubtexts\">  <circle class=\"sds-co",
-          "blogger": "네이버 검색",
-          "date": "2026-11-26",
-          "link": "https://careerly.co.kr/community"
-        },
-        {
-          "title": "새 창 열림",
-          "snippet": "omp=\"Profile\">  브런치스토리 새 창 열림 </div",
-          "blogger": "네이버 검색",
-          "date": "2026-11-26",
-          "link": "https://brunch.co.kr/"
-        },
-        {
-          "title": "2026.01.07. 새 창 열림",
-          "snippet": "ubtexts\">  brunch.co.kr › <span class=\"sds-com",
-          "blogger": "네이버 검색",
-          "date": "2026-11-26",
-          "link": "https://brunch.co.kr/@hyt0404/606"
+          "title": "네이버 추석세일 가정용음식물처리기 다룸 제로컬렉션 3L 후기 , 가격,소음,용량 새 창 열림",
+          "snippet": "바로가기 새 창 열림  다룸으로부터 제품을 제공받아 직접 사용하고 솔직하게 쓴 후기 임 올해 추석은 좀 다르다. 아기 낳고 처음 맞는... 9월 말이 라도 아직 덥잖아 ㅠㅠ [슈퍼적립] 다룸 음식물 처리기 가정용 분쇄기 건조기 분쇄건조형 음식물처리기 다룸 스토어... 명절 음식 차리고 남은 것들 그대로 다 넣고 돌려봤다. 전 부스러기, 나물 다듬은 것 ,...",
+          "blogger": "네이버 블로그",
+          "date": "2026-11-27",
+          "link": "https://blog.naver.com/wooju_0928/224406359903"
         }
       ],
       "press": [
         {
-          "title": "새 창 열림",
-          "snippet": "omp=\"Profile\">  법률신문 새 창 열림 <path fill-rule=\"evenodd\" clip",
-          "blogger": "네이버 검색",
-          "date": "2026-11-26",
-          "link": "https://www.lawtimes.co.kr/"
-        },
-        {
           "title": "[Digital Asset In-Depth] NFT, 열기 식어도 블록체인에 남는 기록 새 창 열림",
-          "snippet": "X0lGF4sOu6U\">새 창 열림  '프로필 사진(Profile Picture)'을 뜻하는 PFP가 NFT의 한 유형을 가리키는 말로 자리 잡았다. 2017년 등장한 픽셀 캐릭터 '크립토펑크(CryptoPunks)'와 2021년... 사람들의 관심이 줄어든 뒤에도 NFT가 발행되고 거래된 이력은 블록체인에 남아 있다....",
+          "snippet": "w_af item item_quick\">Keep에 바로가기 새 창 열림  '프로필 사진(Profile Picture)'을 뜻하는 PFP가 NFT의 한 유형을 가리키는 말로 자리 잡았다. 2017년 등장한 픽셀 캐릭터 '크립토펑크(CryptoPunks)'와 2021년... 사람들의 관심이 줄어든 뒤에도 NFT가 발행되고 거래된 이력은 블록체인에 남아 있다....",
           "blogger": "네이버 검색",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "link": "https://www.lawtimes.co.kr/news/articleView.html?idxno=229609"
         },
         {
-          "title": "새 창 열림",
-          "snippet": "omp=\"Profile\">  이로운넷 새 창 열림 <path fill-rule=\"evenodd\" clip-rule=\"",
-          "blogger": "네이버 검색",
-          "date": "2026-11-26",
-          "link": "http://www.eroun.net"
-        },
-        {
           "title": "\" 남는 돈으로 도우려면 평생 못해요! 기부도 적금처럼\" 새 창 열림",
-          "snippet": "X0lGF4sOu6U\">새 창 열림  나눔은 여유가 생긴 뒤로 미루지 않는 것 \" 남는 돈으로 남을 도우려면 평생 못 해요. 마음먹었을 때 매달 적금 붓듯 넣어야 해요.\" 기부를 망설이는... 건물을 세운 만큼 녹지 공간이 줄어든 데 대한 미안함이 옥상에 나무를 심고 식물을 가꾸는 마음으로 이어졌다고 했다. 빗물을...",
+          "snippet": "w_af item item_quick\">Keep에 바로가기 새 창 열림  나눔은 여유가 생긴 뒤로 미루지 않는 것 \" 남는 돈으로 남을 도우려면 평생 못 해요. 마음먹었을 때 매달 적금 붓듯 넣어야 해요.\" 기부를 망설이는... 건물을 세운 만큼 녹지 공간이 줄어든 데 대한 미안함이 옥상에 나무를 심고 식물을 가꾸는 마음으로 이어졌다고 했다. 빗물을...",
           "blogger": "네이버 검색",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "link": "https://www.eroun.net/news/articleView.html?idxno=95732"
         },
         {
           "title": "“결코 죽지 않아”…와인 쇠락론 불식시킨 ‘근거 있는 자신감’[전형... 새 창 열림",
-          "snippet": "X0lGF4sOu6U\">새 창 열림  어느 때보다 주류 소비가 줄어든 올해, 그곳에서는 어떤 이야기가 오갔을까요? 홍콩무역발전국(HKTDC)의 국내 유일 미디어파트너 초청으로 박람회를... ※ 매경+ 와인프릭에서 더 자세히 다룬 이야기 - 홍콩의 18년이 한국에 남긴 세 가지: 붐이 떠난 뒤 남는 것 , 먼저 사라지는...",
+          "snippet": "w_af item item_quick\">Keep에 바로가기 새 창 열림  어느 때보다 주류 소비가 줄어든 올해, 그곳에서는 어떤 이야기가 오갔을까요? 홍콩무역발전국(HKTDC)의 국내 유일 미디어파트너 초청으로 박람회를... ※ 매경+ 와인프릭에서 더 자세히 다룬 이야기 - 홍콩의 18년이 한국에 남긴 세 가지: 붐이 떠난 뒤 남는 것 , 먼저 사라지는...",
           "blogger": "네이버 검색",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "link": "https://www.mk.co.kr/article/12214905"
+        },
+        {
+          "title": "[김지수의 인터스텔라] 유튜버 ‘올리버쌤’ 미국 재난 생존기… “생존... 새 창 열림",
+          "snippet": "w_af item item_quick\">Keep에 바로가기 새 창 열림  좋아져, 남는 건 인간성 그들이 요새를 지은 텍사스 땅은 아슬아슬한 모래밭이었다. 기록적인 폭염은 땅속의 생명줄인 지하수를 말려버렸고, 아이가 함께... 블랙홀이 된 의료 시스템, 극단적 기후 재난, 명분 없는 전쟁, 빅테크 하마들이 빨아먹는 물과 전기, 줄어든 자원, 인플레이션으로...",
+          "blogger": "네이버 검색",
+          "date": "2026-11-27",
+          "link": "https://biz.chosun.com/topics/kjs_interstellar/2026/09/19/DJYNIWDO4NELNNKVTXRTTUWKQE/?utm_source=naver&utm_medium=original&utm_campaign=biz"
+        },
+        {
+          "title": "오늘의 운세-띠별(19일) 새 창 열림",
+          "snippet": "w_af item item_quick\">Keep에 바로가기 새 창 열림  내가 원하는 결과를 소개한 이에게 말해 두면 실제 손잡을 자리 를 마련해 준다. 00년생 : 몸의 반응이 좋아 전에 어려웠던 동작도 수월하게 된다. 경험... 90년생 : 예전보다 손이 빨라져 하던 일에 필요한 시간이 줄어든 다. 남는 힘을 가장 오래 걸린 단계에 써 보면 전체...",
+          "blogger": "네이버 검색",
+          "date": "2026-11-27",
+          "link": "http://www.kjdaily.com/article.php?aid=1795014001692737227"
         }
       ]
     },
@@ -113,8 +78,8 @@
       "publisher": "부크크(bookk)",
       "pubdate": "",
       "isbn": "",
-      "cover_url": "",
-      "summary": "일상의 결을 멈춰서 세밀하게 들여다보는 도서입니다.",
+      "cover_url": "https://file.bookk.co.kr/books/20250218/67b32a1174f2ff3eee479755/thumbnails/1739850315312.jpg",
+      "summary": "온전한 내가 되었을 때 삶은 나를 따라 움직입니다. 너무 빠르게, 너무 힘들게 앞만 보고 달리고 있다면 잠시 멈춰서 온전한 나를 돌아보시...",
       "toc": [
         "여는 글",
         "1부 · 스쳐 가는 풍경들",
@@ -127,82 +92,82 @@
       "reviews": [
         {
           "title": "새 창 열림",
-          "snippet": "omp=\"Profile\">  나무위키<span c",
+          "snippet": "fds-anchor-layout HJSKFhpJMJcsndG7 jLJ6HMtRtYnAUz9j spnew_af item item_quick\">Keep에 바로가기  새 창 열림 김현승 작가, ‘ 멈춰서 돌아본다 ’ 출간…“스스로를 사랑하는 시간이 되길” 새 창 열림 <a class=\"sds-comps-horizontal-layout...",
           "blogger": "네이버 검색",
-          "date": "2026-11-26",
-          "link": "https://namu.wiki/w/%EB%82%98%EB%AC%B4%EC%9C%84%ED%82%A4:%EB%8C%80%EB%AC%B8"
-        },
-        {
-          "title": "namu.wiki › 후기 새 창 열림",
-          "snippet": "ubtexts\">  <circle class=\"",
-          "blogger": "네이버 검색",
-          "date": "2026-11-26",
-          "link": "https://namu.wiki/w/%ED%9B%84%EA%B8%B0"
-        },
-        {
-          "title": "後記 새 창 열림",
-          "snippet": "ark>를 뜻하는 말로 많이 쓰인다. 해당 문서 참고. 새 창 열림  後期 새 창 열림 <a class=\"sds-comps-horizontal-layout sds-comps-inline-layout fds-anchor-layout HJSKFhpJMJcsndG7 jptSDcc6PbgcM2pY\" nocr=\"1\"...",
-          "blogger": "네이버 검색",
-          "date": "2026-11-26",
-          "link": "https://namu.wiki/w/%ED%9B%84%EA%B8%B0#s-1"
-        },
-        {
-          "title": "後期 새 창 열림",
-          "snippet": "et=\".relink\"> 後記 새 창 열림  GRE 관련 은어 새 창 열림 <a class=\"sds-comps-horizontal-layout sds-comps-inline-layout fds-anchor-layout HJSKFhpJMJcsndG7 jptSDcc6PbgcM2pY\" nocr=\"1\"...",
-          "blogger": "네이버 검색",
-          "date": "2026-11-26",
-          "link": "https://namu.wiki/w/%ED%9B%84%EA%B8%B0#s-2"
-        },
-        {
-          "title": "GRE 관련 은어 새 창 열림",
-          "snippet": "et=\".relink\"> 後期 새 창 열림  웹툰 제목 새 창 열림 (function(){var r=[\"https://ssl.pstatic.net/sstatic/fe/fender/client/d1c1a2964f66bfc5/fender-rest.js\",...",
-          "blogger": "네이버 검색",
-          "date": "2026-11-26",
-          "link": "https://namu.wiki/w/%ED%9B%84%EA%B8%B0#s-3"
-        },
-        {
-          "title": "웹툰 제목 새 창 열림",
-          "snippet": "link\"> GRE 관련 은어 새 창 열림  (function(){var r=[\"https://ssl.pstatic.net/sstatic/fe/fender/client/d1c1a2964f66bfc5/fender-rest.js\",...",
-          "blogger": "네이버 검색",
-          "date": "2026-11-26",
-          "link": "https://namu.wiki/w/%ED%9B%84%EA%B8%B0#s-4"
-        }
-      ],
-      "press": [
-        {
-          "title": "새 창 열림",
-          "snippet": "omp=\"Profile\">  미디어파인 새 창 열림 <path fill-rule=\"evenodd\" cli",
-          "blogger": "네이버 검색",
-          "date": "2026-11-26",
-          "link": "http://www.mediafine.co.kr/"
-        },
-        {
-          "title": "김현승 작가, ' 멈춰서 돌아본다 ' 출간…\"스스로를 사랑하는 시간이 되길... 새 창 열림",
-          "snippet": "X0lGF4sOu6U\">새 창 열림  김현승 작가의 ' 멈춰서 돌아본다 '는 30대 중반으로 접어든 시기에 부드럽고 행복한 삶을 살아가기 위해서는 '멈춤'이라는 시간을 갖고 나를 돌아봐야, 마침표를 찍는 순간 한 인생이 완성될 수 있다는 생각을 하며 써 내려간 시집이다. 이 책은 너무 빠르고 힘들게 앞만 보고 달리고...",
-          "blogger": "네이버 검색",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "link": "https://www.mediafine.co.kr/news/articleView.html?idxno=64449"
         },
         {
-          "title": "새 창 열림",
-          "snippet": "omp=\"Profile\">  시빅뉴스 새 창 열림 <path fill-rule=\"evenodd\" clip-ru",
+          "title": "Keep에 바로가기 새 창 열림",
+          "snippet": "s-comp=\"HorzDivider\"> Keep에 저장  <img width=\"104\" alt=\"<mark>멈춰서 돌아본다</m",
           "blogger": "네이버 검색",
-          "date": "2026-11-26",
-          "link": "http://www.civicnews.com"
+          "date": "2026-11-27",
+          "link": "https://keep.naver.com/"
+        },
+        {
+          "title": "새 창 열림",
+          "snippet": "fds-anchor-layout HJSKFhpJMJcsndG7 jLJ6HMtRtYnAUz9j spnew_af item item_quick\">Keep에 바로가기  새 창 열림 멈춰서 돌아본다 @김현승 새 창 열림 <a class=\"sds-comps-horizontal-layout sds-comps-inline-layout fds-anchor-layout...",
+          "blogger": "네이버 검색",
+          "date": "2026-11-27",
+          "link": "https://bookk.co.kr/bookStore/67b32d4974f2ff3eee480959"
         },
         {
           "title": "[나의 버킷 리스트]안락사 전문병원 '디그니타스'의 회원이 된다면 새 창 열림",
-          "snippet": "X0lGF4sOu6U\">새 창 열림  길을 가다가 부산 사투리가 들리면 멈춰서 돌아본다 . 지난 12월에는 딸이 겨울 휴가를 와서 이주일 정도를 부산에서 보내는 호사를 누렸다. 여름부터 쓰기 시작한 소설을 조금은 더 써 보리라 다짐하고 출발했건만, 이래저래 어울려 노느라고 노트북을 켜 보지도 못하고 서울로 왔다....",
+          "snippet": "t uSAZiF1Wvg8XIPMU\">  길을 가다가 부산 사투리가 들리면 멈춰서 돌아본다 . 지난 12월에는 딸이 겨울 휴가를 와서 이주일 정도를 부산에서 보내는 호사를 누렸다. 여름부터 쓰기 시작한 소설을 조금은 더 써 보리라 다짐하고 출발했건만, 이래저래 어울려 노느라고 노트북을 켜 보지도 못하고 서울로 왔다. 서울에서는 글 쓸 짬을 내는... 새 창...",
           "blogger": "네이버 검색",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "link": "http://www.civicnews.com/news/articleView.html?idxno=27445"
         },
         {
           "title": "[학교의 안과 밖]잠시 멈춰서 돌아본다 는 것 새 창 열림",
-          "snippet": "X0lGF4sOu6U\">새 창 열림  그래서 한 학기라는 시간의 토막을 함께 보낸 이들이 잠시 멈춰서 돌아보는 일이 중요하다. 교사들에게 학생들이 마주칠 때마다 웃는 얼굴로 인사하는... 학교마다 교육과정평가회나 교육활동협의회라는 이름으로 한 학기를 돌아본다 . 한 학기 동안 수업과 생활교육에서 좋은 점과 아쉬운 점을...",
+          "snippet": "t uSAZiF1Wvg8XIPMU\">  그래서 한 학기라는 시간의 토막을 함께 보낸 이들이 잠시 멈춰서 돌아보는 일이 중요하다. 교사들에게 학생들이 마주칠 때마다 웃는 얼굴로 인사하는... 학교마다 교육과정평가회나 교육활동협의회라는 이름으로 한 학기를 돌아본다 . 한 학기 동안 수업과 생활교육에서 좋은 점과 아쉬운 점을 나눈다. 부서별... 새 창 열림...",
           "blogger": "네이버 검색",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "link": "https://www.khan.co.kr/article/201807092131015"
+        },
+        {
+          "title": "네이버뉴스 새 창 열림",
+          "snippet": "<img width=\"84\" alt=\"[학교의 안과 밖]잠시 <mark>멈춰서 돌아본다</mark>는 것의 이미지\" loading=\"lazy\" src=\"https://search.pstatic.net/common/?src=https%3A%2F%2Fimgnews.pstatic.net%2Fimage%2Forigi",
+          "blogger": "네이버 검색",
+          "date": "2026-11-27",
+          "link": "https://n.news.naver.com/mnews/article/032/0002880831?sid=110"
+        }
+      ],
+      "press": [
+        {
+          "title": "김현승 작가, ' 멈춰서 돌아본다 ' 출간…\"스스로를 사랑하는 시간이 되길... 새 창 열림",
+          "snippet": "w_af item item_quick\">Keep에 바로가기 새 창 열림  김현승 작가의 ' 멈춰서 돌아본다 '는 30대 중반으로 접어든 시기에 부드럽고 행복한 삶을 살아가기 위해서는 '멈춤'이라는 시간을 갖고 나를 돌아봐야, 마침표를 찍는 순간 한 인생이 완성될 수 있다는 생각을 하며 써 내려간 시집이다. 이 책은 너무 빠르고 힘들게 앞만 보고 달리고...",
+          "blogger": "네이버 검색",
+          "date": "2026-11-27",
+          "link": "https://www.mediafine.co.kr/news/articleView.html?idxno=64449"
+        },
+        {
+          "title": "[나의 버킷 리스트]안락사 전문병원 '디그니타스'의 회원이 된다면 새 창 열림",
+          "snippet": "w_af item item_quick\">Keep에 바로가기 새 창 열림  길을 가다가 부산 사투리가 들리면 멈춰서 돌아본다 . 지난 12월에는 딸이 겨울 휴가를 와서 이주일 정도를 부산에서 보내는 호사를 누렸다. 여름부터 쓰기 시작한 소설을 조금은 더 써 보리라 다짐하고 출발했건만, 이래저래 어울려 노느라고 노트북을 켜 보지도 못하고 서울로 왔다....",
+          "blogger": "네이버 검색",
+          "date": "2026-11-27",
+          "link": "http://www.civicnews.com/news/articleView.html?idxno=27445"
+        },
+        {
+          "title": "[학교의 안과 밖]잠시 멈춰서 돌아본다 는 것 새 창 열림",
+          "snippet": "w_af item item_quick\">Keep에 바로가기 새 창 열림  그래서 한 학기라는 시간의 토막을 함께 보낸 이들이 잠시 멈춰서 돌아보는 일이 중요하다. 교사들에게 학생들이 마주칠 때마다 웃는 얼굴로 인사하는... 학교마다 교육과정평가회나 교육활동협의회라는 이름으로 한 학기를 돌아본다 . 한 학기 동안 수업과 생활교육에서 좋은 점과 아쉬운 점을...",
+          "blogger": "네이버 검색",
+          "date": "2026-11-27",
+          "link": "https://www.khan.co.kr/article/201807092131015"
+        },
+        {
+          "title": "작은 빛으로 남은 사랑, ‘어쩌면 해피엔딩’의 기적 새 창 열림",
+          "snippet": "w_af item item_quick\">Keep에 바로가기 새 창 열림  누구는 눈가를 훔치고, 누구는 잠시 멈춰서 무대를 돌아본다 . “사랑이란 그리움과 같은 말”(‘사랑이란’)이란 가사처럼, 사랑은 아무 말도 하지 못한 채 남겨진 침묵 속에서 시작되는 것이 아닐까. 극장을 나서는 관객은 반복되는 일상의 균열 사이로 스며든 반딧불이 같은 작은 빛에서...",
+          "blogger": "네이버 검색",
+          "date": "2026-11-27",
+          "link": "https://www.hani.co.kr/arti/culture/music/1227739.html"
+        },
+        {
+          "title": "올 테면 와봐, 이런 게 삶이니까 [비장의 무비] 새 창 열림",
+          "snippet": "w_af item item_quick\">Keep에 바로가기 새 창 열림  문득 멈춰서 뒤를 돌아본다 . 가만히 파도를 응시한다. 이젠 물이 무섭지 않다는 걸 뒤늦게 기억해낸 듯이. 올 테면 와봐, 하면서 오히려 파도를 기대하는 것만 같은 표정으로. 제목을 〈아쿠아〉(2012)로 짓고 유튜브에 올렸다. 10년이 지나는 동안 댓글이 스무 개 남짓 달렸다....",
+          "blogger": "네이버 검색",
+          "date": "2026-11-27",
+          "link": "https://www.sisain.co.kr/news/articleView.html?idxno=55227"
         }
       ]
     },
@@ -215,8 +180,8 @@
       "publisher": "부크크(bookk)",
       "pubdate": "",
       "isbn": "",
-      "cover_url": "",
-      "summary": "하루가 지나면 아는게 많아질 줄 알았는데, 하루가 지나면서 알고 싶은게 많아진다. 나이가 들면 모든게 이해될 줄 알았는데 나이가 들면서 이해해야 할 것들이 많아진다. 시간이 지나면 자연스레 바뀔 줄 알았는데...",
+      "cover_url": "https://file.bookk.co.kr/books/migrations/files/2020/10/06/b99c8e41c9af4fb9d3f42f56cddec4c3.JPG",
+      "summary": "하루가 지나면 아는게 많아질 줄 알았는데, 하루가 지나면서 알고 싶은게 많아진다. 나이가 들면 모든게 이해될 줄 알았는데 나이가 들면서...",
       "toc": [
         "시작하며",
         "첫 번째 기록",
@@ -228,83 +193,55 @@
       ],
       "reviews": [
         {
-          "title": "새 창 열림",
-          "snippet": "omp=\"Profile\">  독서신문 새 창 열림 </sp",
+          "title": "Keep에 바로가기 새 창 열림",
+          "snippet": "s-comp=\"HorzDivider\"> Keep에 저장  <img width=\"104\" alt=\"<mark>하루가 행복할 수 있다면</mark> | 김현승 | BOOKK(",
           "blogger": "네이버 검색",
-          "date": "2026-11-26",
-          "link": "https://www.readersnews.com/"
-        },
-        {
-          "title": "2021.04.20. 새 창 열림",
-          "snippet": "ubtexts\">  www.readersnews.com <span class=\"sds-comps-text OjlyhSZ",
-          "blogger": "네이버 검색",
-          "date": "2026-11-26",
-          "link": "https://www.readersnews.com/news/articleView.html?idxno=102888"
+          "date": "2026-11-27",
+          "link": "https://keep.naver.com/"
         },
         {
           "title": "새 창 열림",
-          "snippet": "omp=\"Profile\">  예스24 새 창 열림</sp",
+          "snippet": "fds-anchor-layout HJSKFhpJMJcsndG7 jLJ6HMtRtYnAUz9j spnew_af item item_quick\">Keep에 바로가기  새 창 열림 하루가 행복할 수 있다면 | 김현승 | BOOKK(부크크) 새 창 열림 <a class=\"sds-comps-horizontal-layout sds-comps-inline-layout...",
           "blogger": "네이버 검색",
-          "date": "2026-11-26",
-          "link": "https://www.yes24.com/Main/default.aspx"
-        },
-        {
-          "title": "www.yes24.com › product 새 창 열림",
-          "snippet": "ubtexts\">  <circle c",
-          "blogger": "네이버 검색",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "link": "https://www.yes24.com/product/goods/93745886"
         },
         {
           "title": "새 창 열림",
-          "snippet": "omp=\"Profile\">  카카오페이지 새 창 열림 <",
+          "snippet": "fds-anchor-layout HJSKFhpJMJcsndG7 jLJ6HMtRtYnAUz9j spnew_af item item_quick\">Keep에 바로가기  새 창 열림 하루가 행복할 수 있다면 | 김현승 새 창 열림 <a class=\"sds-comps-horizontal-layout sds-comps-inline-layout...",
           "blogger": "네이버 검색",
-          "date": "2026-11-26",
-          "link": "https://page.kakao.com/"
+          "date": "2026-11-27",
+          "link": "https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=253645667"
         },
         {
-          "title": "page.kakao.com › 행복할-거야-이래도-되나-싶을-정도로[단행본] 새 창 열림",
-          "snippet": "ubtexts\">  <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 3 16\" class=\"sds-comps-svg sds-comps-ico",
+          "title": "그리고 행복 은 우리가... 하루 를 살아도 행복할 수 있다면 그 길을... 새 창 열림",
+          "snippet": "lAeMg.JPEG%2FPostEncodingTask.8866A621-B331-4648-AE3B-17670C9B9FA2.jpg&type=f292_487_clip_lb\"/> 새 창 열림  <img width=\"28\" height=\"28\" alt=\"프로필 이미지\" loading=\"lazy\"...",
           "blogger": "네이버 검색",
-          "date": "2026-11-26",
-          "link": "https://page.kakao.com/home/%ED%96%89%EB%B3%B5%ED%95%A0-%EA%B1%B0%EC%95%BC-%EC%9D%B4%EB%9E%98%EB%8F%84-%EB%90%98%EB%82%98-%EC%8B%B6%EC%9D%84-%EC%A0%95%EB%8F%84%EB%A1%9C%5B%EB%8B%A8%ED%96%89%EB%B3%B8%5D/67694961"
+          "date": "2026-11-27",
+          "link": "https://m.naver.com/shorts/?mediaType=POST&recId=%7B%22query%22%3A%22%5C%22%ED%95%98%EB%A3%A8%EA%B0%80+%ED%96%89%EB%B3%B5%ED%95%A0+%EC%88%98+%EC%9E%88%EB%8B%A4%EB%A9%B4%5C%22%22%2C%22seedIndex%22%3A%225%22%2C%22type%22%3A%22ALL%22%2C%22order%22%3A%22RELATED%22%2C%22filter%22%3A%5B%22LOW_QUALITY_LEVEL_3%22%2C%22NXOPEN_0%22%5D%2C%22theme%22%3A%22book%22%2C%22now%22%3A%220%22%7D&recType=CLIP_SEARCH&seedMediaId=6ac026dbc1c6026479539724&serviceType=CLIP"
+        },
+        {
+          "title": "동행일기 10.03 새 창 열림",
+          "snippet": "is sds-comps-text-ellipsis-2 sds-comps-text-type-body2 sds-comps-text-weight-lg sWs5W1uuR8ASZN7_\">그리고 행복 은 우리가... 하루 를 살아도 행복할 수 있다면 그 길을... 새 창 열림  <a class=\"sds-comps-base-layout...",
+          "blogger": "네이버 검색",
+          "date": "2026-11-27",
+          "link": "https://clip.naver.com/@hongstar0518"
+        },
+        {
+          "title": "웃는 하루가 더... 너를 행복 하게 하는... 네가 행복할 수 있다면 그것이... 새 창 열림",
+          "snippet": "me%2F1F935B4BD0A92A78F9DEF50A90352DF3E3D1%2F*%7Ehmac%3D2a0afe2c50a1f44176bf64f66a7b1623b407798e6254f60eacfaa823d9d7543b\" type=\"video/mp4\"/> 새 창 열림  <img width=\"28\" height=\"28\" alt=\"프로필 이미지\"...",
+          "blogger": "네이버 검색",
+          "date": "2026-11-27",
+          "link": "https://m.naver.com/shorts/?mediaType=VOD&recId=%7B%22query%22%3A%22%5C%22%ED%95%98%EB%A3%A8%EA%B0%80+%ED%96%89%EB%B3%B5%ED%95%A0+%EC%88%98+%EC%9E%88%EB%8B%A4%EB%A9%B4%5C%22%22%2C%22seedIndex%22%3A%2215%22%2C%22type%22%3A%22ALL%22%2C%22order%22%3A%22RELATED%22%2C%22filter%22%3A%5B%22LOW_QUALITY_LEVEL_3%22%2C%22NXOPEN_0%22%5D%2C%22theme%22%3A%22book%22%2C%22now%22%3A%220%22%7D&recType=CLIP_SEARCH&seedMediaId=1F935B4BD0A92A78F9DEF50A90352DF3E3D1&serviceType=CLIP"
         }
       ],
       "press": [
         {
-          "title": "새 창 열림",
-          "snippet": "omp=\"Profile\">  bnt뉴스 새 창 열림 <path fill-rule=\"evenodd\" clip-r",
-          "blogger": "네이버 검색",
-          "date": "2026-11-26",
-          "link": "http://www.bntnews.co.kr"
-        },
-        {
           "title": "강예빈 3부작 <알고 있던 얼굴, 알아가고 싶은 사람> [bnt K-아티스트｜... 새 창 열림",
-          "snippet": "X0lGF4sOu6U\">새 창 열림  사람이 있다면 좋겠다고 생각한다. 말을 예쁘게 하고 웃는 모습이 좋은 사람에게 마음이 간다. 대화가 통하고 서로의 일과 생활을 이해할 수 있기를 바란다. 멋있어 보이는 사람을 만나는 일과 함께 살아갈 사람을 생각하는 일 사이에, 이제는 상대와 보낼 하루가 들어와 있다. 훗날의 행복...",
+          "snippet": "w_af item item_quick\">Keep에 바로가기 새 창 열림  사람이 있다면 좋겠다고 생각한다. 말을 예쁘게 하고 웃는 모습이 좋은 사람에게 마음이 간다. 대화가 통하고 서로의 일과 생활을 이해할 수 있기를 바란다. 멋있어 보이는 사람을 만나는 일과 함께 살아갈 사람을 생각하는 일 사이에, 이제는 상대와 보낼 하루가 들어와 있다. 훗날의 행복...",
           "blogger": "네이버 검색",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "link": "https://www.bntnews.co.kr/article/view/bnt202611250304"
-        },
-        {
-          "title": "[저출생 인식 개선 ②] 달라진 일상에서 발견한 행복 ‘인생 최고의 업... 새 창 열림",
-          "snippet": "X0lGF4sOu6U\">새 창 열림  발견할 수 있는 행복 에 주목한다. 혼자만의 시간이 주는 행복 이 있다면 , 누군가와 일상을 나누며 느끼는 행복 도 있다. 삶의 모습이 달라진다고 해서... 이어지는 3편 ‘HP 100%’에서는 바쁜 하루 를 보낸 아빠가 가족을 통해 다시 힘을 얻는 이야기를 담는다. ※본 공익광고는...",
-          "blogger": "네이버 검색",
-          "date": "2026-11-26",
-          "link": "https://news.tf.co.kr/read/video/2386326.htm"
-        },
-        {
-          "title": "새 창 열림",
-          "snippet": "omp=\"Profile\">  법률저널 새 창 열림 <path fill-rule=\"evenodd\" clip-rule=",
-          "blogger": "네이버 검색",
-          "date": "2026-11-26",
-          "link": "http://www.lec.co.kr/"
-        },
-        {
-          "title": "[합격수기] 2026년도 5급공채 교육행정 수석 김태윤 씨 \"한 번뿐인 인생... 새 창 열림",
-          "snippet": "X0lGF4sOu6U\">새 창 열림  단 한 번뿐인 인생에서 꿈을 이룰 수만 있다면 일 년을 더 바쳐도 아깝지 않다고 생각했습니다. 부정적인 생각이 들 때면 스스로 논박하며 비합리적인... 바꿀 수 있는 것에 집중하며 최대한 의연하고 긍정적으로 생각하려 했습니다. 또한 인생의 행복 을 모두 합격 이후로 미뤄두기보다는,...",
-          "blogger": "네이버 검색",
-          "date": "2026-11-26",
-          "link": "http://www.lec.co.kr/news/articleView.html?idxno=753051"
         }
       ]
     }
