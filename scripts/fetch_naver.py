@@ -13,6 +13,14 @@ BOOKS_SEED = [
         "id": "book-1",
         "bookk_id": "6b0590cade1ad179312a4036",
         "bookk_url": "https://bookk.co.kr/bookStore/6b0590cade1ad179312a4036",
+        "stores": {
+            "paper": [
+                {"name": "부크크", "url": "https://bookk.co.kr/bookStore/6b0590cade1ad179312a4036"}
+            ],
+            "ebook": [
+                {"name": "부크크 eBook", "url": "https://bookk.co.kr/bookStore/6b07a74913cd34e08772d3cc"}
+            ]
+        },
         "query": "말이 줄어든 자리에 남는 것들",
         "required_phrases": ["말이 줄어든 자리에 남는 것들", "말이줄어든자리에남는것들"],
         "require_author_or_book": False,
@@ -95,6 +103,20 @@ BOOKS_SEED = [
         "id": "book-2",
         "bookk_id": "67b32cdd74f2ff3eee47f6b1",
         "bookk_url": "https://bookk.co.kr/bookStore/67b32cdd74f2ff3eee47f6b1",
+        "stores": {
+            "paper": [
+                {
+                    "name": "네이버 도서",
+                    "url": "https://search.shopping.naver.com/book/search?bookTabType=ALL&pageIndex=1&pageSize=40&query=%EB%A9%88%EC%B6%B0%EC%84%9C+%EB%8F%8C%EC%95%84%EB%B3%B8%EB%8B%A4&sort=REL&prevQuery=%EB%A9%88%EC%B6%B0%EC%84%9C%EB%8F%8C%EC%95%84%EB%B3%B8%EB%8B%A4"
+                }
+            ],
+            "ebook": [
+                {
+                    "name": "YES24 eBook",
+                    "url": "https://www.yes24.com/Product/Goods/142843232"
+                }
+            ]
+        },
         "query": "멈춰서 돌아본다",
         "required_phrases": ["멈춰서 돌아본다", "멈춰서돌아본다"],
         "require_author_or_book": True,
@@ -279,6 +301,20 @@ BOOKS_SEED = [
         "id": "book-3",
         "bookk_id": "646abe734222b24502d39197",
         "bookk_url": "https://bookk.co.kr/bookStore/646abe734222b24502d39197",
+        "stores": {
+            "paper": [
+                {
+                    "name": "네이버 도서",
+                    "url": "https://search.shopping.naver.com/book/catalog/32492774157?cat_id=50011280&frm=MBOKPRO&query=%25ED%2595%2598%25EB%25A3%25A8%25EA%25B0%2580%2B%25ED%2596%2589%25EB%25B3%25B5%25ED%2595%25A0%2B%25EC%2588%2598%2B%25EC%259E%2588%25EB%258B%25A4%25EB%25A9%25B4&N"
+                }
+            ],
+            "ebook": [
+                {
+                    "name": "YES24 eBook",
+                    "url": "https://www.yes24.com/Product/Goods/142763189"
+                }
+            ]
+        },
         "query": "하루가 행복할 수 있다면",
         "required_phrases": ["하루가 행복할 수 있다면", "하루가행복할수있다면"],
         "require_author_or_book": True,
@@ -602,6 +638,18 @@ def search_naver_web(
         return []
 
 
+def sanitize_store_list(raw_list: list[dict] | None) -> list[dict]:
+    if not raw_list:
+        return []
+    cleaned = []
+    for item in raw_list:
+        name = (item.get("name") or "").strip()
+        url = (item.get("url") or "").strip()
+        if name and url.startswith(("http://", "https://")):
+            cleaned.append({"name": name, "url": url})
+    return cleaned
+
+
 def build_dataset() -> dict:
     os.makedirs("data", exist_ok=True)
     books_output = []
@@ -643,10 +691,20 @@ def build_dataset() -> dict:
 
         time.sleep(random.uniform(1.0, 2.0))
 
+        raw_stores = seed.get("stores") or {}
+        paper_stores = sanitize_store_list(raw_stores.get("paper"))
+        if not paper_stores and seed.get("bookk_url"):
+            paper_stores = [{"name": "부크크", "url": seed["bookk_url"]}]
+        ebook_stores = sanitize_store_list(raw_stores.get("ebook"))
+
         books_output.append({
             "id": seed["id"],
             "bookk_id": seed["bookk_id"],
             "bookk_url": seed["bookk_url"],
+            "stores": {
+                "paper": paper_stores,
+                "ebook": ebook_stores
+            },
             "title": resolved_title,
             "author": seed["author"],
             "publisher": "부크크(bookk)",
@@ -670,4 +728,4 @@ if __name__ == "__main__":
     dataset = build_dataset()
     with open("data/books_data.json", "w", encoding="utf-8") as f:
         json.dump(dataset, f, ensure_ascii=False, indent=2)
-    print("Updated data/books_data.json with curated summaries and TOCs.")
+    print("Updated data/books_data.json with paper and ebook store links.")
