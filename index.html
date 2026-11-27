@@ -20,6 +20,8 @@
       --text-muted: #8c857d;
       --accent: #4a5d4e;
       --accent-soft: #eef2ef;
+      --ebook-accent: #3b4f6b;
+      --ebook-soft: #eef2f7;
       --border: #e5e0d8;
       --shelf-wood: #dfd8cc;
       --shelf-shadow: rgba(34, 32, 30, 0.08);
@@ -247,7 +249,7 @@
       top: 0;
       right: 0;
       width: 100%;
-      max-width: 560px;
+      max-width: 580px;
       height: 100vh;
       background: var(--bg-drawer);
       box-shadow: -12px 0 40px rgba(0, 0, 0, 0.14);
@@ -307,7 +309,7 @@
 
     .drawer-hero {
       display: flex;
-      gap: 22px;
+      gap: 20px;
       align-items: flex-start;
       margin-bottom: 26px;
     }
@@ -329,37 +331,83 @@
       display: block;
     }
 
+    .drawer-info {
+      flex: 1;
+      min-width: 0;
+    }
+
     .drawer-info h2 {
       font-family: var(--serif);
-      font-size: 1.38rem;
+      font-size: 1.34rem;
       font-weight: 600;
       line-height: 1.38;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       word-break: keep-all;
     }
 
     .drawer-author {
-      font-size: 0.88rem;
+      font-size: 0.86rem;
       color: var(--text-sub);
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
 
-    .btn-buy {
-      display: inline-flex;
+    /* Store Format Groups (Paper / E-book) */
+    .store-groups {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .store-row {
+      display: flex;
+      flex-wrap: wrap;
       align-items: center;
       gap: 6px;
-      padding: 9px 16px;
-      background: var(--accent);
-      color: #ffffff;
-      font-size: 0.84rem;
+    }
+
+    .format-badge {
+      font-size: 0.73rem;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 4px;
+      letter-spacing: 0.02em;
+    }
+
+    .format-badge.paper {
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .format-badge.ebook {
+      background: var(--ebook-soft);
+      color: var(--ebook-accent);
+    }
+
+    .store-link-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 6px 11px;
+      font-size: 0.8rem;
       font-weight: 500;
       border-radius: 6px;
       text-decoration: none;
-      transition: background 0.2s ease;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-main);
+      transition: all 0.18s ease;
     }
 
-    .btn-buy:hover {
-      background: #3a4a3e;
+    .store-link-btn.paper:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #ffffff;
+    }
+
+    .store-link-btn.ebook:hover {
+      background: var(--ebook-accent);
+      border-color: var(--ebook-accent);
+      color: #ffffff;
     }
 
     /* Tabs */
@@ -613,9 +661,7 @@
         <div class="drawer-info">
           <h2 id="drawerBookTitle"></h2>
           <div id="drawerBookAuthor" class="drawer-author"></div>
-          <a id="drawerBuyBtn" class="btn-buy" href="#" target="_blank" rel="noopener noreferrer">
-            부크크에서 책 보기 ↗
-          </a>
+          <div id="drawerStoreGroups" class="store-groups"></div>
         </div>
       </div>
 
@@ -666,7 +712,7 @@
               { name: "부크크", url: "https://bookk.co.kr/bookStore/6b0590cade1ad179312a4036" }
             ],
             ebook: [
-              { name: "부크크 eBook", url: "https://bookk.co.kr/bookStore/6b07a74913cd34e08772d3cc" }
+              { name: "부크크 E-Book", url: "https://bookk.co.kr/bookStore/6b07a74913cd34e08772d3cc" }
             ]
           },
           cover_url: "https://file.bookk.co.kr/books/20261125/6b052fe7de1ad179312721c8/thumbnails/1795595868514.jpg",
@@ -685,13 +731,13 @@
           stores: {
             paper: [
               {
-                name: "네이버 도서",
+                name: "종이책 (교보문고 등)",
                 url: "https://search.shopping.naver.com/book/search?bookTabType=ALL&pageIndex=1&pageSize=40&query=%EB%A9%88%EC%B6%B0%EC%84%9C+%EB%8F%8C%EC%95%84%EB%B3%B8%EB%8B%A4&sort=REL&prevQuery=%EB%A9%88%EC%B6%B0%EC%84%9C%EB%8F%8C%EC%95%84%EB%B3%B8%EB%8B%A4"
               }
             ],
             ebook: [
               {
-                name: "YES24 eBook",
+                name: "E-Book(YES24)",
                 url: "https://www.yes24.com/Product/Goods/142843232"
               }
             ]
@@ -712,13 +758,13 @@
           stores: {
             paper: [
               {
-                name: "네이버 도서",
+                name: "종이책 (교보문고 등)",
                 url: "https://search.shopping.naver.com/book/catalog/32492774157?cat_id=50011280&frm=MBOKPRO&query=%25ED%2595%2598%25EB%25A3%25A8%25EA%25B0%2580%2B%25ED%2596%2589%25EB%25B3%25B5%25ED%2595%25A0%2B%25EC%2588%2598%2B%25EC%259E%2588%25EB%258B%25A4%25EB%25A9%25B4&N"
               }
             ],
             ebook: [
               {
-                name: "YES24 eBook",
+                name: "E-Book(YES24)",
                 url: "https://www.yes24.com/Product/Goods/142763189"
               }
             ]
@@ -754,6 +800,56 @@
         /^Part\s*\d+/i.test(trimmed) ||
         trimmed === "「차례」"
       );
+    }
+
+    function renderStoreGroups(book) {
+      const container = document.getElementById("drawerStoreGroups");
+      const stores = book.stores || {};
+
+      let paperList = Array.isArray(stores.paper)
+        ? stores.paper.filter((s) => s && s.name && s.url)
+        : [];
+      let ebookList = Array.isArray(stores.ebook)
+        ? stores.ebook.filter((s) => s && s.name && s.url)
+        : [];
+
+      if (paperList.length === 0 && book.bookk_url) {
+        paperList = [{ name: "부크크", url: book.bookk_url }];
+      }
+
+      const rows = [];
+
+      if (paperList.length > 0) {
+        const linksHtml = paperList
+          .map(
+            (s) =>
+              `<a class="store-link-btn paper" href="${escapeHtml(s.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(s.name)} ↗</a>`
+          )
+          .join("");
+        rows.push(`
+          <div class="store-row">
+            <span class="format-badge paper">종이책</span>
+            ${linksHtml}
+          </div>
+        `);
+      }
+
+      if (ebookList.length > 0) {
+        const linksHtml = ebookList
+          .map(
+            (s) =>
+              `<a class="store-link-btn ebook" href="${escapeHtml(s.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(s.name)} ↗</a>`
+          )
+          .join("");
+        rows.push(`
+          <div class="store-row">
+            <span class="format-badge ebook">전자책</span>
+            ${linksHtml}
+          </div>
+        `);
+      }
+
+      container.innerHTML = rows.join("");
     }
 
     function renderShelf(books) {
@@ -815,7 +911,7 @@
 
       document.getElementById("drawerBookTitle").textContent = book.title;
       document.getElementById("drawerBookAuthor").textContent = `${book.author} 지음 · ${book.publisher || "부크크(bookk)"}`;
-      document.getElementById("drawerBuyBtn").href = book.bookk_url;
+      renderStoreGroups(book);
 
       const coverEl = document.getElementById("drawerCover");
       coverEl.innerHTML = book.cover_url
@@ -849,7 +945,6 @@
       renderFeedList("drawerReviews", book.reviews, "아직 수집된 네이버 블로그 리뷰가 없습니다.");
       renderFeedList("drawerPress", book.press, "아직 수집된 언론 보도가 없습니다.");
 
-      // Reset to first tab
       setActiveTab("intro");
 
       document.getElementById("drawerBackdrop").classList.add("open");
