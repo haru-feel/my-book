@@ -20,7 +20,14 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Fetch data from Naver Open API
+      - name: Install Playwright and Chromium
+        run: |
+          python -m pip install --upgrade pip
+          pip install playwright
+          playwright install chromium
+          playwright install-deps chromium
+
+      - name: Fetch data from Naver and Bookk
         env:
           NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
           NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
@@ -34,6 +41,6 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes in books_data.json"
           else
-            git commit -m "chore: update Naver book reviews and press data"
+            git commit -m "chore: update Naver book reviews, press, and Bookk details"
             git push
           fi
