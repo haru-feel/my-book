@@ -3,597 +3,876 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>서재 — 출간 도서 아카이브</title>
+  <title>김현승의 서재 | 작은 기록들이 머무는 공간</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Noto+Serif+KR:wght@300;400;500;600&family=Pretendard:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600&family=Noto+Serif+KR:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
   <style>
     :root {
-      --bg: #f7f5f0;
-      --surface: #fcfbf8;
-      --ink: #1d1c1a;
-      --muted: #6e6a63;
-      --line: #e4dfd5;
-      --accent: #2c3e35;
+      --bg-paper: #f7f5f0;
+      --bg-card: #fdfcf9;
+      --bg-drawer: #ffffff;
+      --text-main: #22201e;
+      --text-sub: #5c5751;
+      --text-muted: #8c857d;
+      --accent: #4a5d4e;
       --accent-soft: #eef2ef;
+      --border: #e5e0d8;
+      --shelf-wood: #dfd8cc;
+      --shelf-shadow: rgba(34, 32, 30, 0.08);
+      --serif: "Noto Serif KR", Georgia, serif;
+      --sans: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
     body {
-      background: var(--bg);
-      color: var(--ink);
-      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
-      line-height: 1.7;
+      background-color: var(--bg-paper);
+      color: var(--text-main);
+      font-family: var(--sans);
+      line-height: 1.6;
       -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
     .container {
-      max-width: 1120px;
+      width: 100%;
+      max-width: 960px;
       margin: 0 auto;
-      padding: 0 28px;
+      padding: 0 24px;
     }
 
     /* Header */
     header {
-      padding: 72px 0 48px;
-      border-bottom: 1px solid var(--line);
+      padding: 64px 0 40px;
+      text-align: center;
     }
 
     .eyebrow {
-      font-size: 12px;
-      letter-spacing: 0.18em;
+      font-size: 0.78rem;
+      letter-spacing: 0.16em;
       text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 14px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
     }
 
-    h1.site-title {
-      font-family: 'Noto Serif KR', serif;
-      font-size: clamp(28px, 4vw, 42px);
-      font-weight: 400;
+    header h1 {
+      font-family: var(--serif);
+      font-size: clamp(1.7rem, 3.5vw, 2.3rem);
+      font-weight: 600;
       letter-spacing: -0.02em;
-      margin-bottom: 14px;
+      color: var(--text-main);
+      margin-bottom: 12px;
     }
 
-    .site-desc {
-      max-width: 580px;
-      color: var(--muted);
-      font-size: 15px;
+    header p.subtitle {
+      font-size: 0.96rem;
+      color: var(--text-sub);
+      font-weight: 300;
+      max-width: 520px;
+      margin: 0 auto;
     }
 
-    .meta-bar {
-      margin-top: 24px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 16px;
-      font-size: 12.5px;
-      color: var(--muted);
+    /* Bookshelf Section */
+    main {
+      flex: 1;
+      padding: 16px 0 72px;
     }
 
-    /* Bookshelf Grid */
-    .shelf-section {
-      padding: 64px 0 96px;
+    .shelf-wrapper {
+      position: relative;
+      padding: 28px 16px 0;
     }
 
-    .books-grid {
+    .books-row {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
-      gap: 36px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 32px;
+      align-items: end;
+      padding: 0 16px 24px;
     }
 
     .book-card {
-      background: var(--surface);
-      border: 1px solid var(--line);
-      padding: 28px;
+      background: transparent;
+      border: none;
       cursor: pointer;
-      transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease;
+      text-align: center;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      position: relative;
-    }
-
-    .book-card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 18px 36px rgba(29, 28, 26, 0.06);
-      border-color: #cfc8ba;
-    }
-
-    .cover-frame {
-      aspect-ratio: 3 / 4;
-      background: #ece7dc;
-      border: 1px solid var(--line);
-      margin-bottom: 24px;
-      overflow: hidden;
-      display: flex;
       align-items: center;
-      justify-content: center;
-      position: relative;
+      transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+      outline: none;
     }
 
-    .cover-frame img {
+    .book-card:hover,
+    .book-card:focus-visible {
+      transform: translateY(-10px);
+    }
+
+    .book-cover-wrap {
+      position: relative;
+      width: 100%;
+      max-width: 200px;
+      aspect-ratio: 1 / 1.46;
+      border-radius: 3px 8px 8px 3px;
+      overflow: hidden;
+      background: #eae5dc;
+      box-shadow:
+        -6px 8px 18px rgba(0, 0, 0, 0.14),
+        -2px 0 4px rgba(0, 0, 0, 0.08),
+        inset 3px 0 6px rgba(255, 255, 255, 0.35);
+      margin-bottom: 18px;
+      transition: box-shadow 0.28s ease;
+    }
+
+    .book-card:hover .book-cover-wrap {
+      box-shadow:
+        -10px 16px 28px rgba(0, 0, 0, 0.18),
+        -2px 0 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .book-cover-wrap img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
     }
 
-    .cover-placeholder {
-      padding: 28px;
-      text-align: center;
-      font-family: 'Noto Serif KR', serif;
-      color: var(--ink);
+    .book-cover-fallback {
+      width: 100%;
+      height: 100%;
+      padding: 24px 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      text-align: left;
+      background: linear-gradient(145deg, #f3efe6 0%, #e4ddd0 100%);
+      border-left: 6px solid #c9c0b1;
     }
 
-    .cover-placeholder .book-num {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 14px;
-      letter-spacing: 0.2em;
-      color: var(--muted);
-      margin-bottom: 12px;
+    .book-cover-fallback .fallback-title {
+      font-family: var(--serif);
+      font-size: 1.05rem;
+      font-weight: 600;
+      line-height: 1.45;
+      color: var(--text-main);
     }
 
-    .cover-placeholder .book-line {
-      width: 36px;
-      height: 1px;
-      background: var(--ink);
-      margin: 16px auto;
-      transform: rotate(-25deg);
-      opacity: 0.45;
+    .book-cover-fallback .fallback-author {
+      font-size: 0.78rem;
+      color: var(--text-sub);
+    }
+
+    .book-meta {
+      max-width: 220px;
     }
 
     .book-title {
-      font-family: 'Noto Serif KR', serif;
-      font-size: 20px;
-      font-weight: 500;
-      margin-bottom: 8px;
-      line-height: 1.45;
+      font-family: var(--serif);
+      font-size: 1.02rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 4px;
+      line-height: 1.4;
+      word-break: keep-all;
     }
 
-    .book-summary {
-      font-size: 14px;
-      color: var(--muted);
-      margin-bottom: 22px;
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
+    .book-hint {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      transition: color 0.2s ease;
     }
 
-    .card-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding-top: 16px;
-      border-top: 1px solid var(--line);
-      font-size: 13px;
+    .book-card:hover .book-hint {
       color: var(--accent);
-      font-weight: 500;
     }
 
-    /* Reader Modal / Study View */
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(29, 28, 26, 0.48);
-      backdrop-filter: blur(3px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      z-index: 100;
+    .shelf-plank {
+      height: 14px;
+      background: linear-gradient(180deg, #e7e1d6 0%, var(--shelf-wood) 100%);
+      border-radius: 3px;
+      box-shadow: 0 10px 20px var(--shelf-shadow);
+      border-top: 1px solid rgba(255, 255, 255, 0.7);
     }
 
-    .modal-backdrop.open {
-      display: flex;
-    }
-
-    .study-panel {
-      background: var(--surface);
-      border: 1px solid var(--line);
-      width: 100%;
-      max-width: 860px;
-      max-height: 88vh;
-      overflow-y: auto;
-      padding: 40px;
-      position: relative;
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.16);
-    }
-
-    .close-btn {
-      position: sticky;
-      top: 0;
-      float: right;
-      background: var(--bg);
-      border: 1px solid var(--line);
-      color: var(--ink);
-      padding: 6px 14px;
-      font-size: 13px;
-      cursor: pointer;
-    }
-
-    .modal-header {
-      border-bottom: 1px solid var(--line);
-      padding-bottom: 24px;
-      margin-bottom: 24px;
-    }
-
-    .modal-title {
-      font-family: 'Noto Serif KR', serif;
-      font-size: 26px;
-      margin-bottom: 8px;
-    }
-
-    .modal-actions {
-      margin-top: 16px;
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .btn-link {
-      display: inline-block;
-      padding: 8px 16px;
-      border: 1px solid var(--accent);
-      background: var(--accent);
-      color: #fff;
-      text-decoration: none;
-      font-size: 13px;
-    }
-
-    .btn-link.secondary {
-      background: transparent;
-      color: var(--ink);
-      border-color: var(--line);
-    }
-
-    .tabs {
-      display: flex;
-      gap: 8px;
-      border-bottom: 1px solid var(--line);
-      margin-bottom: 24px;
-      flex-wrap: wrap;
-    }
-
-    .tab-btn {
-      background: none;
-      border: none;
-      padding: 10px 16px;
-      font-size: 14px;
-      color: var(--muted);
-      cursor: pointer;
-      border-bottom: 2px solid transparent;
-    }
-
-    .tab-btn.active {
-      color: var(--ink);
-      border-bottom-color: var(--ink);
-      font-weight: 500;
-    }
-
-    .tab-content {
-      display: none;
-    }
-
-    .tab-content.active {
-      display: block;
-    }
-
-    .toc-list {
-      list-style: none;
-      margin-top: 16px;
-    }
-
-    .toc-list li {
-      padding: 10px 0;
-      border-bottom: 1px dashed var(--line);
-      font-family: 'Noto Serif KR', serif;
-      font-size: 15px;
-    }
-
-    .excerpt-quote {
-      background: var(--bg);
-      border-left: 3px solid var(--accent);
-      padding: 20px 24px;
-      margin-bottom: 16px;
-      font-family: 'Noto Serif KR', serif;
-      font-size: 16px;
-      line-height: 1.85;
-    }
-
-    .feed-card {
-      border: 1px solid var(--line);
-      padding: 18px 20px;
-      margin-bottom: 14px;
-      background: #fff;
-    }
-
-    .feed-title {
-      font-weight: 500;
-      font-size: 15px;
-      margin-bottom: 6px;
-    }
-
-    .feed-title a {
-      color: var(--ink);
-      text-decoration: none;
-    }
-
-    .feed-title a:hover {
-      text-decoration: underline;
-    }
-
-    .feed-snippet {
-      font-size: 13.5px;
-      color: var(--muted);
-      margin-bottom: 8px;
-    }
-
-    .feed-meta {
-      font-size: 12px;
-      color: #8b867d;
-    }
-
+    /* Footer */
     footer {
-      border-top: 1px solid var(--line);
-      padding: 36px 0 56px;
-      font-size: 13px;
-      color: var(--muted);
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 16px;
+      padding: 28px 0 40px;
+      text-align: center;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
     }
 
     footer a {
-      color: var(--ink);
+      color: var(--text-sub);
       text-decoration: none;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1px;
     }
 
-    @media (max-width: 640px) {
-      .study-panel { padding: 24px 20px; }
+    footer a:hover {
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    /* Drawer Overlay & Panel */
+    .drawer-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(25, 23, 20, 0.42);
+      backdrop-filter: blur(2px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.28s ease;
+      z-index: 90;
+    }
+
+    .drawer-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 100%;
+      max-width: 560px;
+      height: 100vh;
+      background: var(--bg-drawer);
+      box-shadow: -12px 0 40px rgba(0, 0, 0, 0.14);
+      transform: translateX(100%);
+      transition: transform 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .drawer.open {
+      transform: translateX(0);
+    }
+
+    .drawer-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-card);
+    }
+
+    .drawer-label {
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+    }
+
+    .drawer-close {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      width: 34px;
+      height: 34px;
+      font-size: 1.1rem;
+      line-height: 1;
+      color: var(--text-sub);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .drawer-close:hover {
+      background: var(--bg-paper);
+      color: var(--text-main);
+    }
+
+    .drawer-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 28px 28px 48px;
+    }
+
+    .drawer-hero {
+      display: flex;
+      gap: 22px;
+      align-items: flex-start;
+      margin-bottom: 26px;
+    }
+
+    .drawer-cover {
+      width: 112px;
+      flex-shrink: 0;
+      aspect-ratio: 1 / 1.46;
+      border-radius: 3px 6px 6px 3px;
+      overflow: hidden;
+      background: #eae5dc;
+      box-shadow: -4px 6px 14px rgba(0, 0, 0, 0.12);
+    }
+
+    .drawer-cover img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .drawer-info h2 {
+      font-family: var(--serif);
+      font-size: 1.38rem;
+      font-weight: 600;
+      line-height: 1.38;
+      margin-bottom: 8px;
+      word-break: keep-all;
+    }
+
+    .drawer-author {
+      font-size: 0.88rem;
+      color: var(--text-sub);
+      margin-bottom: 16px;
+    }
+
+    .btn-buy {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 16px;
+      background: var(--accent);
+      color: #ffffff;
+      font-size: 0.84rem;
+      font-weight: 500;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: background 0.2s ease;
+    }
+
+    .btn-buy:hover {
+      background: #3a4a3e;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 6px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      padding: 10px 12px;
+      font-family: var(--sans);
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn:hover {
+      color: var(--text-main);
+    }
+
+    .tab-btn.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    /* Section Headings inside Drawer */
+    .section-title {
+      font-family: var(--serif);
+      font-size: 0.98rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-title::before {
+      content: "";
+      display: inline-block;
+      width: 3px;
+      height: 14px;
+      background: var(--accent);
+      border-radius: 2px;
+    }
+
+    /* Book Summary */
+    .book-summary {
+      font-size: 0.93rem;
+      color: var(--text-sub);
+      line-height: 1.85;
+      white-space: pre-line;
+      word-break: keep-all;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 28px;
+    }
+
+    /* Structured TOC */
+    .toc-list {
+      list-style: none;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 20px;
+    }
+
+    .toc-item {
+      font-size: 0.88rem;
+      color: var(--text-sub);
+      padding: 7px 0;
+      border-bottom: 1px dashed rgba(229, 224, 216, 0.7);
+      line-height: 1.5;
+      word-break: keep-all;
+    }
+
+    .toc-item:last-child {
+      border-bottom: none;
+    }
+
+    .toc-item.toc-part {
+      font-family: var(--serif);
+      font-weight: 600;
+      font-size: 0.94rem;
+      color: var(--accent);
+      margin-top: 14px;
+      padding: 8px 10px;
+      background: var(--accent-soft);
+      border-radius: 5px;
+      border-bottom: none;
+    }
+
+    .toc-item.toc-part:first-child {
+      margin-top: 0;
+    }
+
+    .toc-item.toc-sub {
+      padding-left: 10px;
+    }
+
+    /* Excerpts */
+    .excerpt-card {
+      background: var(--bg-card);
+      border-left: 3px solid var(--accent);
+      border-top: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      border-radius: 0 8px 8px 0;
+      padding: 18px 20px;
+      margin-bottom: 14px;
+      font-family: var(--serif);
+      font-size: 0.96rem;
+      line-height: 1.8;
+      color: var(--text-main);
+      word-break: keep-all;
+    }
+
+    /* Reviews & Press */
+    .feed-group {
+      margin-bottom: 26px;
+    }
+
+    .feed-card {
+      display: block;
+      text-decoration: none;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 15px 18px;
+      margin-bottom: 10px;
+      transition: border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .feed-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .feed-card-title {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 6px;
+      line-height: 1.45;
+    }
+
+    .feed-card-snippet {
+      font-size: 0.83rem;
+      color: var(--text-sub);
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+
+    .feed-card-meta {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .empty-state {
+      font-size: 0.86rem;
+      color: var(--text-muted);
+      background: var(--bg-card);
+      border: 1px dashed var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    @media (max-width: 720px) {
+      header {
+        padding: 44px 0 28px;
+      }
+
+      .books-row {
+        grid-template-columns: 1fr;
+        gap: 36px;
+      }
+
+      .shelf-plank {
+        display: none;
+      }
+
+      .drawer {
+        max-width: 100%;
+      }
+
+      .drawer-body {
+        padding: 22px 20px 44px;
+      }
     }
   </style>
 </head>
 <body>
   <header>
     <div class="container">
-      <div class="eyebrow">Interactive Study · Book Archive</div>
-      <h1 class="site-title">출간 도서 서재</h1>
-      <p class="site-desc">
-        책장을 넘기듯 세 권의 책을 둘러보고, 책 속 문장과 네이버에 기록된 독자 리뷰 및 언론 보도를 한자리에서 살펴볼 수 있는 공간입니다.
+      <div class="eyebrow">Kim Hyun-Seung · Bookshelf</div>
+      <h1>김현승의 서재</h1>
+      <p class="subtitle">
+        멈춤과 침묵, 그리고 하루의 결을 기록한 세 권의 책입니다. 표지를 누르면 책 소개와 목차, 독자 리뷰를 살펴보실 수 있습니다.
       </p>
-      <div class="meta-bar">
-        <span id="lastUpdated">데이터 동기화 확인 중...</span>
-        <span>·</span>
-        <a href="https://linktr.ee/haru_feel" target="_blank" rel="noopener noreferrer">Linktree 전체 링크 보기 ↗</a>
-      </div>
     </div>
   </header>
 
-  <main class="shelf-section">
+  <main>
     <div class="container">
-      <div id="booksGrid" class="books-grid"></div>
+      <div class="shelf-wrapper">
+        <div id="booksRow" class="books-row"></div>
+        <div class="shelf-plank" aria-hidden="true"></div>
+      </div>
     </div>
   </main>
 
-  <div id="studyModal" class="modal-backdrop" aria-hidden="true">
-    <div class="study-panel" role="dialog" aria-modal="true">
-      <button id="closeModalBtn" class="close-btn" type="button">닫기 ✕</button>
-      <div id="modalBody"></div>
-    </div>
-  </div>
-
   <footer>
-    <div class="container" style="display:flex; justify-content:space-between; width:100%; flex-wrap:wrap; gap:16px;">
-      <span>© 출간 도서 아카이브</span>
-      <span>네이버 검색 API · GitHub Actions 자동 업데이트</span>
+    <div class="container">
+      <p>
+        © 김현승 · <a href="https://linktr.ee/haru_feel" target="_blank" rel="noopener noreferrer">linktr.ee/haru_feel</a>
+        <span id="updatedAtText"></span>
+      </p>
     </div>
   </footer>
 
+  <!-- Slide-over Drawer -->
+  <div id="drawerBackdrop" class="drawer-backdrop"></div>
+  <aside id="bookDrawer" class="drawer" aria-hidden="true" aria-labelledby="drawerBookTitle">
+    <div class="drawer-header">
+      <span class="drawer-label">BOOK DETAILS</span>
+      <button id="drawerCloseBtn" class="drawer-close" type="button" aria-label="닫기">×</button>
+    </div>
+    <div class="drawer-body">
+      <div class="drawer-hero">
+        <div id="drawerCover" class="drawer-cover"></div>
+        <div class="drawer-info">
+          <h2 id="drawerBookTitle"></h2>
+          <div id="drawerBookAuthor" class="drawer-author"></div>
+          <a id="drawerBuyBtn" class="btn-buy" href="#" target="_blank" rel="noopener noreferrer">
+            부크크에서 책 보기 ↗
+          </a>
+        </div>
+      </div>
+
+      <div class="tabs" role="tablist">
+        <button class="tab-btn active" type="button" data-tab="intro">책 소개 &amp; 목차</button>
+        <button class="tab-btn" type="button" data-tab="excerpts">문장 발췌</button>
+        <button class="tab-btn" type="button" data-tab="media">리뷰 &amp; 언론</button>
+      </div>
+
+      <div id="tab-intro" class="tab-panel active">
+        <h3 class="section-title">도서 소개</h3>
+        <div id="drawerSummary" class="book-summary"></div>
+
+        <h3 class="section-title">목차</h3>
+        <ul id="drawerToc" class="toc-list"></ul>
+      </div>
+
+      <div id="tab-excerpts" class="tab-panel">
+        <h3 class="section-title">책 속의 문장</h3>
+        <div id="drawerExcerpts"></div>
+      </div>
+
+      <div id="tab-media" class="tab-panel">
+        <div class="feed-group">
+          <h3 class="section-title">네이버 블로그 리뷰</h3>
+          <div id="drawerReviews"></div>
+        </div>
+        <div class="feed-group">
+          <h3 class="section-title">언론 보도</h3>
+          <div id="drawerPress"></div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
   <script>
     const FALLBACK_DATA = {
-      updated_at: "초기 샘플 데이터",
+      updated_at: "",
       books: [
         {
           id: "book-1",
-          bookk_url: "https://bookk.co.kr/bookStore/6b0590cade1ad179312a4036",
-          title: "첫 번째 도서 (제목 반영 예정)",
+          title: "말이 줄어든 자리에 남는 것들",
           author: "김현승",
           publisher: "부크크(bookk)",
-          cover_url: "",
-          summary: "scripts/fetch_naver.py의 query 항목에 책 제목을 입력하고 워크플로우를 실행하면 네이버 도서·블로그·뉴스 데이터가 자동으로 채워집니다.",
-          toc: ["프롤로그", "1장 · 조용한 사유", "2장 · 지나간 계절의 기록", "에필로그"],
-          excerpts: ["말이 줄어든 자리에 비로소 선명해지는 마음의 결이 있다."],
-          reviews: [
-            {
-              title: "차분하게 읽어 내려간 독서 기록",
-              snippet: "네이버 블로그 후기가 수집되면 이곳에 독자 리뷰와 링크가 표시됩니다.",
-              blogger: "독자 리뷰 샘플",
-              date: "2026",
-              link: "https://bookk.co.kr/bookStore/6b0590cade1ad179312a4036"
-            }
-          ],
+          bookk_url: "https://bookk.co.kr/bookStore/6b0590cade1ad179312a4036",
+          cover_url: "https://file.bookk.co.kr/books/20261125/6b052fe7de1ad179312721c8/thumbnails/1795595868514.jpg",
+          summary: "우리는 얼마나 많은 말을 하며 살아왔을까.\n나를 이해시키기 위해 설명하고, 오해받지 않기 위해 해명하고, 누군가에게 인정받기 위해 끊임없이 자신을 증명해 왔다.",
+          toc: ["#프롤로그 말이 줄어든 자리에서 들리기 시작한 것들"],
+          excerpts: ["말이 줄어든 자리에 비로소 들리기 시작하는 것들이 있다."],
+          reviews: [],
           press: []
         },
         {
           id: "book-2",
-          bookk_url: "https://bookk.co.kr/bookStore/67b32cdd74f2ff3eee47f6b1",
-          title: "두 번째 도서 (제목 반영 예정)",
+          title: "멈춰서 돌아본다",
           author: "김현승",
           publisher: "부크크(bookk)",
-          cover_url: "",
-          summary: "부크크 상세 페이지와 연결된 두 번째 도서 공간입니다.",
-          toc: ["여는 글", "1부 · 일상의 틈", "2부 · 머무는 시선", "닫는 글"],
-          excerpts: ["스쳐 지나가는 순간들을 붙잡아 두는 일은 나를 잃지 않는 연습이다."],
+          bookk_url: "https://bookk.co.kr/bookStore/67b32cdd74f2ff3eee47f6b1",
+          cover_url: "https://file.bookk.co.kr/books/20250218/67b32a1174f2ff3eee479755/thumbnails/1739850315312.jpg",
+          summary: "온전한 내가 되었을 때 삶은 나를 따라 움직입니다.",
+          toc: ["#프롤로그 14"],
+          excerpts: ["완벽한 답보다 다정한 질문 하나가 하루를 버티게 할 때가 있다."],
           reviews: [],
           press: []
         },
         {
           id: "book-3",
-          bookk_url: "https://bookk.co.kr/bookStore/646abe734222b24502d39197",
-          title: "세 번째 도서 (제목 반영 예정)",
+          title: "하루가 행복할 수 있다면",
           author: "김현승",
           publisher: "부크크(bookk)",
-          cover_url: "",
-          summary: "부크크 상세 페이지와 연결된 세 번째 도서 공간입니다.",
-          toc: ["시작하며", "첫 번째 이야기", "두 번째 이야기", "마치며"],
-          excerpts: ["조용히 쌓인 문장들이 어느 날 건너갈 다리가 되어준다."],
+          bookk_url: "https://bookk.co.kr/bookStore/646abe734222b24502d39197",
+          cover_url: "https://file.bookk.co.kr/books/migrations/files/2020/10/06/b99c8e41c9af4fb9d3f42f56cddec4c3.JPG",
+          summary: "이 책을 통해 다른 사람이 행복한 하루가 아닌 당신의 하루가 행복할 수 있기를 바랍니다.",
+          toc: ["#프롤로그 … 12"],
+          excerpts: ["조용한 기록은 시간이 흐를수록 선명한 지도가 된다."],
           reviews: [],
           press: []
         }
       ]
     };
 
-    let currentBooks = [];
+    let booksState = [];
 
-    function escapeHtml(str = "") {
-      return String(str)
+    function escapeHtml(str) {
+      return String(str || "")
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;");
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
     }
 
-    function renderShelf(dataset) {
-      currentBooks = dataset.books || [];
-      const updatedEl = document.getElementById("lastUpdated");
-      if (dataset.updated_at && dataset.updated_at !== "초기 샘플 데이터") {
-        const d = new Date(dataset.updated_at);
-        updatedEl.textContent = `최근 수집: ${isNaN(d) ? dataset.updated_at : d.toLocaleString("ko-KR")}`;
-      } else {
-        updatedEl.textContent = "샘플 모드 (네이버 API 연동 후 자동 갱신)";
+    function isPartHeading(line) {
+      const trimmed = line.trim();
+      return (
+        trimmed.startsWith("#프롤로그") ||
+        trimmed.startsWith("#에필로그") ||
+        trimmed.startsWith("#") ||
+        trimmed.startsWith("[제") ||
+        /^Part\s*\d+/i.test(trimmed) ||
+        trimmed === "「차례」"
+      );
+    }
+
+    function renderShelf(books) {
+      const row = document.getElementById("booksRow");
+      row.innerHTML = books
+        .map((book, idx) => {
+          const coverHtml = book.cover_url
+            ? `<img src="${escapeHtml(book.cover_url)}" alt="${escapeHtml(book.title)} 표지" loading="lazy" />`
+            : `<div class="book-cover-fallback">
+                <div class="fallback-title">${escapeHtml(book.title)}</div>
+                <div class="fallback-author">${escapeHtml(book.author)}</div>
+              </div>`;
+
+          return `
+            <button class="book-card" type="button" data-index="${idx}">
+              <div class="book-cover-wrap">${coverHtml}</div>
+              <div class="book-meta">
+                <div class="book-title">${escapeHtml(book.title)}</div>
+                <div class="book-hint">책 펼치기 →</div>
+              </div>
+            </button>
+          `;
+        })
+        .join("");
+
+      row.querySelectorAll(".book-card").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const idx = Number(btn.getAttribute("data-index"));
+          openDrawer(booksState[idx]);
+        });
+      });
+    }
+
+    function renderFeedList(containerId, items, emptyMessage) {
+      const el = document.getElementById(containerId);
+      if (!items || items.length === 0) {
+        el.innerHTML = `<div class="empty-state">${escapeHtml(emptyMessage)}</div>`;
+        return;
       }
 
-      const grid = document.getElementById("booksGrid");
-      grid.innerHTML = currentBooks.map((book, idx) => {
-        const reviewCount = (book.reviews || []).length;
-        const pressCount = (book.press || []).length;
-        const coverHtml = book.cover_url
-          ? `<img src="${escapeHtml(book.cover_url)}" alt="${escapeHtml(book.title)} 표지" />`
-          : `<div class="cover-placeholder">
-               <div class="book-num">BOOK 0${idx + 1}</div>
-               <div style="font-size:16px; line-height:1.5;">${escapeHtml(book.title)}</div>
-               <div class="book-line"></div>
-               <div style="font-size:12px; color:#6e6a63;">${escapeHtml(book.author || "")}</div>
-             </div>`;
-
-        return `
-          <article class="book-card" onclick="openBookModal('${escapeHtml(book.id)}')">
-            <div>
-              <div class="cover-frame">${coverHtml}</div>
-              <h2 class="book-title">${escapeHtml(book.title)}</h2>
-              <p class="book-summary">${escapeHtml(book.summary || "")}</p>
+      el.innerHTML = items
+        .map(
+          (item) => `
+          <a class="feed-card" href="${escapeHtml(item.link)}" target="_blank" rel="noopener noreferrer">
+            <div class="feed-card-title">${escapeHtml(item.title)}</div>
+            ${item.snippet ? `<div class="feed-card-snippet">${escapeHtml(item.snippet)}</div>` : ""}
+            <div class="feed-card-meta">
+              <span>${escapeHtml(item.blogger || "")}</span>
+              <span>${escapeHtml(item.date || "")}</span>
             </div>
-            <div class="card-footer">
-              <span>서재 펼쳐보기 →</span>
-              <span style="color:#6e6a63; font-weight:400;">리뷰 ${reviewCount} · 보도 ${pressCount}</span>
-            </div>
-          </article>
-        `;
-      }).join("");
+          </a>
+        `
+        )
+        .join("");
     }
 
-    function openBookModal(bookId) {
-      const book = currentBooks.find(b => b.id === bookId);
+    function openDrawer(book) {
       if (!book) return;
 
-      const modalBody = document.getElementById("modalBody");
-      const tocHtml = (book.toc || []).map(item => `<li>${escapeHtml(item)}</li>`).join("");
-      const excerptsHtml = (book.excerpts || []).map(q => `<blockquote class="excerpt-quote">“${escapeHtml(q)}”</blockquote>`).join("");
+      document.getElementById("drawerBookTitle").textContent = book.title;
+      document.getElementById("drawerBookAuthor").textContent = `${book.author} 지음 · ${book.publisher || "부크크(bookk)"}`;
+      document.getElementById("drawerBuyBtn").href = book.bookk_url;
 
-      const reviewsHtml = (book.reviews && book.reviews.length)
-        ? book.reviews.map(r => `
-            <div class="feed-card">
-              <div class="feed-title"><a href="${escapeHtml(r.link)}" target="_blank" rel="noopener noreferrer">${escapeHtml(r.title)} ↗</a></div>
-              <p class="feed-snippet">${escapeHtml(r.snippet)}</p>
-              <div class="feed-meta">${escapeHtml(r.blogger)} · ${escapeHtml(r.date)}</div>
-            </div>
-          `).join("")
-        : `<p style="color:var(--muted); font-size:14px;">아직 수집된 네이버 블로그 리뷰가 없습니다.</p>`;
+      const coverEl = document.getElementById("drawerCover");
+      coverEl.innerHTML = book.cover_url
+        ? `<img src="${escapeHtml(book.cover_url)}" alt="${escapeHtml(book.title)} 표지" />`
+        : `<div class="book-cover-fallback"><div class="fallback-title">${escapeHtml(book.title)}</div></div>`;
 
-      const pressHtml = (book.press && book.press.length)
-        ? book.press.map(p => `
-            <div class="feed-card">
-              <div class="feed-title"><a href="${escapeHtml(p.link)}" target="_blank" rel="noopener noreferrer">${escapeHtml(p.title)} ↗</a></div>
-              <p class="feed-snippet">${escapeHtml(p.snippet)}</p>
-              <div class="feed-meta">${escapeHtml(p.date)}</div>
-            </div>
-          `).join("")
-        : `<p style="color:var(--muted); font-size:14px;">수집된 언론 보도가 없습니다.</p>`;
+      document.getElementById("drawerSummary").textContent = book.summary || "도서 소개가 준비 중입니다.";
 
-      modalBody.innerHTML = `
-        <div class="modal-header">
-          <div style="font-size:12px; color:var(--muted); margin-bottom:6px;">${escapeHtml(book.author || "")} · ${escapeHtml(book.publisher || "부크크")}</div>
-          <h2 class="modal-title">${escapeHtml(book.title)}</h2>
-          <p style="font-size:14px; color:var(--muted);">${escapeHtml(book.summary || "")}</p>
-          <div class="modal-actions">
-            <a class="btn-link" href="${escapeHtml(book.bookk_url)}" target="_blank" rel="noopener noreferrer">부크크에서 책 보기 ↗</a>
-            <button class="btn-link secondary" type="button" onclick="switchTab('reviews')">독자 리뷰 (${(book.reviews || []).length})</button>
-            <button class="btn-link secondary" type="button" onclick="switchTab('press')">언론 보도 (${(book.press || []).length})</button>
-          </div>
-        </div>
+      const tocEl = document.getElementById("drawerToc");
+      if (book.toc && book.toc.length > 0) {
+        tocEl.innerHTML = book.toc
+          .map((line) => {
+            const part = isPartHeading(line);
+            const cls = part ? "toc-item toc-part" : "toc-item toc-sub";
+            return `<li class="${cls}">${escapeHtml(line)}</li>`;
+          })
+          .join("");
+      } else {
+        tocEl.innerHTML = `<li class="toc-item">목차 정보가 등록되지 않았습니다.</li>`;
+      }
 
-        <div class="tabs">
-          <button class="tab-btn active" data-tab="overview" onclick="switchTab('overview')">책 소개 & 목차</button>
-          <button class="tab-btn" data-tab="excerpts" onclick="switchTab('excerpts')">문장 발췌</button>
-          <button class="tab-btn" data-tab="reviews" onclick="switchTab('reviews')">독자 리뷰 (${(book.reviews || []).length})</button>
-          <button class="tab-btn" data-tab="press" onclick="switchTab('press')">언론 보도 (${(book.press || []).length})</button>
-        </div>
+      const excerptsEl = document.getElementById("drawerExcerpts");
+      if (book.excerpts && book.excerpts.length > 0) {
+        excerptsEl.innerHTML = book.excerpts
+          .map((quote) => `<blockquote class="excerpt-card">“${escapeHtml(quote)}”</blockquote>`)
+          .join("");
+      } else {
+        excerptsEl.innerHTML = `<div class="empty-state">발췌 문장이 곧 추가될 예정입니다.</div>`;
+      }
 
-        <div id="tab-overview" class="tab-content active">
-          <p style="font-size:14.5px; margin-bottom:20px;">${escapeHtml(book.summary || "")}</p>
-          <h3 style="font-size:14px; color:var(--muted); margin-bottom:6px;">목차 미리보기</h3>
-          <ul class="toc-list">${tocHtml || "<li>목차 정보가 준비 중입니다.</li>"}</ul>
-        </div>
+      renderFeedList("drawerReviews", book.reviews, "아직 수집된 네이버 블로그 리뷰가 없습니다.");
+      renderFeedList("drawerPress", book.press, "아직 수집된 언론 보도가 없습니다.");
 
-        <div id="tab-excerpts" class="tab-content">
-          ${excerptsHtml || "<p style='color:var(--muted); font-size:14px;'>등록된 발췌 문장이 없습니다.</p>"}
-        </div>
+      // Reset to first tab
+      setActiveTab("intro");
 
-        <div id="tab-reviews" class="tab-content">
-          ${reviewsHtml}
-        </div>
-
-        <div id="tab-press" class="tab-content">
-          ${pressHtml}
-        </div>
-      `;
-
-      document.getElementById("studyModal").classList.add("open");
+      document.getElementById("drawerBackdrop").classList.add("open");
+      const drawer = document.getElementById("bookDrawer");
+      drawer.classList.add("open");
+      drawer.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
     }
 
-    function switchTab(tabName) {
-      document.querySelectorAll(".tab-btn").forEach(btn => {
-        btn.classList.toggle("active", btn.dataset.tab === tabName);
+    function closeDrawer() {
+      document.getElementById("drawerBackdrop").classList.remove("open");
+      const drawer = document.getElementById("bookDrawer");
+      drawer.classList.remove("open");
+      drawer.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+    }
+
+    function setActiveTab(tabName) {
+      document.querySelectorAll(".tab-btn").forEach((btn) => {
+        btn.classList.toggle("active", btn.getAttribute("data-tab") === tabName);
       });
-      document.querySelectorAll(".tab-content").forEach(panel => {
+      document.querySelectorAll(".tab-panel").forEach((panel) => {
         panel.classList.toggle("active", panel.id === `tab-${tabName}`);
       });
     }
 
-    function closeModal() {
-      document.getElementById("studyModal").classList.remove("open");
-    }
-
-    document.getElementById("closeModalBtn").addEventListener("click", closeModal);
-    document.getElementById("studyModal").addEventListener("click", (e) => {
-      if (e.target.id === "studyModal") closeModal();
+    document.querySelectorAll(".tab-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        setActiveTab(btn.getAttribute("data-tab"));
+      });
     });
+
+    document.getElementById("drawerCloseBtn").addEventListener("click", closeDrawer);
+    document.getElementById("drawerBackdrop").addEventListener("click", closeDrawer);
     document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") closeModal();
+      if (e.key === "Escape") closeDrawer();
     });
 
     async function init() {
       try {
-        const res = await fetch("./data/books_data.json", { cache: "no-store" });
-        if (!res.ok) throw new Error("No JSON yet");
-        const json = await res.json();
-        renderShelf(json);
-      } catch {
-        renderShelf(FALLBACK_DATA);
+        const res = await fetch(`./data/books_data.json?t=${Date.now()}`);
+        if (!res.ok) throw new Error("Failed to load books_data.json");
+        const data = await res.json();
+        booksState = data.books && data.books.length ? data.books : FALLBACK_DATA.books;
+
+        if (data.updated_at) {
+          const d = new Date(data.updated_at);
+          if (!Number.isNaN(d.getTime())) {
+            const yyyy = d.getFullYear();
+            const mm = String(d.getMonth() + 1).padStart(2, "0");
+            const dd = String(d.getDate()).padStart(2, "0");
+            document.getElementById("updatedAtText").textContent = ` · 데이터 갱신 ${yyyy}.${mm}.${dd}`;
+          }
+        }
+      } catch (err) {
+        booksState = FALLBACK_DATA.books;
       }
+
+      renderShelf(booksState);
     }
 
     init();
