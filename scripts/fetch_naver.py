@@ -96,12 +96,15 @@ BOOK_CONTEXT_KEYWORDS = (
     "yes24", "알라딘", "교보문고"
 )
 
-BOOKK_NOISE_LINES = (
-    "책 소개", "책소개", "작품 소개", "작품소개", "목차", "차례",
-    "저자 소개", "저자소개", "출판사 서평", "출판사서평", "배송/반품/교환",
-    "장바구니", "바로구매", "찜하기", "공유하기", "더보기", "접기",
-    "부크크", "bookk", "로그인", "회원가입", "고객센터"
+SECTION_STOP_PATTERN = re.compile(
+    r"^(?:목차|차례|책\s*소개|책소개|작품\s*소개|작품소개|저자\s*소개|저자소개|출판사\s*서평|출판사서평|배송/반품/교환|배송\s*/\s*반품|리뷰\s*\(\d*\)|관련\s*도서)$",
+    re.IGNORECASE
 )
+
+UI_NOISE_LINES = {
+    "더보기", "접기", "공유하기", "장바구니", "바로구매", "찜하기",
+    "로그인", "회원가입", "고객센터", "이용약관", "개인정보처리방침"
+}
 
 
 def clean_text(raw_html: str) -> str:
@@ -112,25 +115,6 @@ def clean_text(raw_html: str) -> str:
     unescaped = html.unescape(no_broken_prefix)
     cleaned = re.sub(r"(Keep에 바로가기|Keep에 저장|새 창 열림)", " ", unescaped)
     return re.sub(r"\s+", " ", cleaned).strip()
-
-
-def html_to_lines(raw_html: str) -> list[str]:
-    if not raw_html:
-        return []
-    with_breaks = re.sub(
-        r"<(?:/?(?:p|div|li|tr|h[1-6]|section|article)|br\s*/?)[^>]*>",
-        "\n",
-        raw_html,
-        flags=re.I
-    )
-    no_tags = re.sub(r"<[^>]+>", " ", with_breaks)
-    unescaped = html.unescape(no_tags)
-    lines = []
-    for raw in unescaped.splitlines():
-        line = re.sub(r"\s+", " ", raw).strip()
-        if line:
-            lines.append(line)
-    return lines
 
 
 def normalize_compact(text: str) -> str:
@@ -144,140 +128,110 @@ def fetch_html(url: str, timeout: int = 15) -> str:
         return resp.read().decode(charset, errors="replace")
 
 
-def parse_next_data_from_html(page_html: str) -> dict:
-    """부크크 페이지에 __NEXT_DATA__ 등 JSON 데이터가 포함되어 있으면 파싱합니다."""
-    m = re.search(
-        r'<script[^>]+id=["\']__NEXT_DATA__["\'][^>]*>(.*?)</script>',
-        page_html,
-        re.IGNORECASE | re.DOTALL
-    )
-    if not m:
-        return {}
-    try:
-        return json.loads(m.group(1).strip())
-    except Exception:
-        return {}
+def parse_section_from_lines(lines: list[str], start_keywords: tuple[str, ...]) -> list[str]:
+    """렌더링된 텍스트 줄 목록에서 지정된 섹션 제목 이후 다음 섹션 전까지의 줄을 추출합니다."""
+    start_idx = -1
+    for i, line in enumerate(lines):
+        compact = normalize_compact(line)
+        if any(normalize_compact(kw) == compact or line.strip() in start_keywords for kw in start_keywords):
+            start_idx = i + 1
+            break
+
+    if start_idx == -1:
+        return []
+
+    collected: list[str] = []
+    for line in lines[start_idx:]:
+        trimmed = re.sub(r"\s+", " ", line).strip()
+        if not trimmed:
+            continue
+        if SECTION_STOP_PATTERN.match(trimmed):
+            break
+        if trimmed in UI_NOISE_LINES:
+            continue
+        if trimmed not in collected:
+            collected.append(trimmed)
+        if len(collected) >= 50:
+            break
+
+    return collected
 
 
-def find_text_fields_in_json(obj, target_keys: tuple[str, ...]) -> list[str]:
-    found: list[str] = []
-    if isinstance(obj, dict):
-        for k, v in obj.items():
-            lk = str(k).lower()
-            if any(tk in lk for tk in target_keys) and isinstance(v, str) and len(v.strip()) > 5:
-                found.append(v.strip())
-            else:
-                found.extend(find_text_fields_in_json(v, target_keys))
-    elif isinstance(obj, list):
-        for item in obj:
-            found.extend(find_text_fields_in_json(item, target_keys))
-    return found
-
-
-def extract_bookk_summary(page_html: str, next_data: dict, fallback_og_desc: str) -> str:
-    """부크크 상세 페이지에 등재된 책 소개 본문을 추출합니다."""
-    # 1) __NEXT_DATA__ 내 소개 필드 우선 확인
-    if next_data:
-        desc_candidates = find_text_fields_in_json(
-            next_data,
-            ("description", "introduce", "intro", "summary", "bookdesc", "content")
-        )
-        for cand in desc_candidates:
-            cleaned = "\n".join(html_to_lines(cand)) if "<" in cand else cand.strip()
-            if len(cleaned) >= 30 and not cleaned.endswith("..."):
-                return cleaned
-
-    # 2) HTML 본문 내 '책 소개' ~ '목차'/'저자 소개' 구간 추출
-    intro_match = re.search(
-        r"(?:책\s*소개|작품\s*소개)([\s\S]{20,5000}?)(?:목차|차례|저자\s*소개|출판사\s*서평|배송/반품|$)",
-        page_html,
-        re.IGNORECASE
-    )
-    if intro_match:
-        lines = html_to_lines(intro_match.group(1))
-        filtered = [
-            ln for ln in lines
-            if ln.lower() not in BOOKK_NOISE_LINES and len(ln) >= 2
-        ]
-        joined = "\n\n".join(filtered).strip()
-        if len(joined) >= 25:
-            return joined
-
-    return fallback_og_desc
-
-
-def extract_bookk_toc(page_html: str, next_data: dict) -> list[str]:
-    """부크크 상세 페이지에 등재된 목차(차례)를 추출합니다."""
-    # 1) __NEXT_DATA__ 내 목차 필드 우선 확인
-    if next_data:
-        toc_candidates = find_text_fields_in_json(
-            next_data,
-            ("toc", "tableofcontents", "contentslist", "index", "chapter")
-        )
-        for cand in toc_candidates:
-            raw_lines = html_to_lines(cand) if "<" in cand else cand.splitlines()
-            cleaned_lines = []
-            for ln in raw_lines:
-                line = re.sub(r"\s+", " ", ln).strip()
-                if not line or line.lower() in BOOKK_NOISE_LINES:
-                    continue
-                if 2 <= len(line) <= 100 and line not in cleaned_lines:
-                    cleaned_lines.append(line)
-            if len(cleaned_lines) >= 2:
-                return cleaned_lines[:40]
-
-    # 2) HTML 본문 내 '목차' 또는 '차례' ~ 다음 섹션 헤더 구간 추출
-    toc_block_match = re.search(
-        r"(?:목차|차례)([\s\S]{10,6000}?)(?:저자\s*소개|출판사\s*서평|책\s*속으로|배송/반품|관련\s*도서|리뷰|</section>|</article>|$)",
-        page_html,
-        re.IGNORECASE
-    )
-    if toc_block_match:
-        lines = html_to_lines(toc_block_match.group(1))
-        candidates: list[str] = []
-        for line in lines:
-            if line.lower() in BOOKK_NOISE_LINES:
-                continue
-            if 2 <= len(line) <= 100 and line not in candidates:
-                candidates.append(line)
-            if len(candidates) >= 40:
-                break
-        if candidates:
-            return candidates
-
-    return []
-
-
-def fetch_bookk_details(bookk_url: str) -> dict:
-    """부크크 상세 페이지에서 등재된 제목, 책 소개, 표지, 목차를 추출합니다."""
+def fetch_bookk_details_with_playwright(bookk_url: str) -> dict:
+    """Playwright로 부크크 페이지를 렌더링해 제목, 표지, 책 소개, 목차를 추출합니다."""
     info = {"title": "", "summary": "", "cover_url": "", "toc": []}
+
+    try:
+        from playwright.sync_api import sync_playwright
+
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            context = browser.new_context(
+                user_agent=HEADERS["User-Agent"],
+                locale="ko-KR"
+            )
+            page = context.new_page()
+            page.goto(bookk_url, wait_until="networkidle", timeout=30000)
+            page.wait_for_timeout(2000)
+
+            # 접힌 섹션이나 더보기 버튼이 있다면 클릭 시도
+            for btn_text in ("목차", "책 소개", "더보기"):
+                try:
+                    loc = page.get_by_text(btn_text, exact=False).first
+                    if loc.is_visible(timeout=500):
+                        loc.click(timeout=1000)
+                        page.wait_for_timeout(400)
+                except Exception:
+                    pass
+
+            og_title = page.locator('meta[property="og:title"]').get_attribute("content") or ""
+            og_desc = page.locator('meta[property="og:description"]').get_attribute("content") or ""
+            og_img = page.locator('meta[property="og:image"]').get_attribute("content") or ""
+            body_text = page.inner_text("body")
+
+            browser.close()
+
+        if og_title:
+            info["title"] = re.sub(r"\s*\|\s*부크크.*$", "", clean_text(og_title)).strip()
+
+        if og_img:
+            img_url = html.unescape(og_img).strip()
+            info["cover_url"] = ("https:" + img_url) if img_url.startswith("//") else img_url
+
+        lines = [re.sub(r"\s+", " ", ln).strip() for ln in body_text.splitlines() if ln.strip()]
+
+        summary_lines = parse_section_from_lines(lines, ("책 소개", "책소개", "작품 소개", "작품소개"))
+        if summary_lines:
+            info["summary"] = "\n\n".join(summary_lines)
+        elif og_desc and len(clean_text(og_desc)) > 15:
+            info["summary"] = clean_text(og_desc)
+
+        toc_lines = parse_section_from_lines(lines, ("목차", "차례"))
+        if toc_lines:
+            info["toc"] = [ln for ln in toc_lines if len(ln) <= 120][:40]
+
+        return info
+
+    except Exception as e:
+        print(f"[WARN] Playwright failed for Bookk ({bookk_url}), falling back to static HTML: {e}")
+
+    # 폴백: 정적 HTML 파싱
     try:
         page_html = fetch_html(bookk_url)
-        next_data = parse_next_data_from_html(page_html)
-
         og_title = re.search(r'<meta[^>]+property=["\']og:title["\'][^>]+content=["\']([^"\']+)["\']', page_html, re.I)
         og_desc = re.search(r'<meta[^>]+property=["\']og:description["\'][^>]+content=["\']([^"\']+)["\']', page_html, re.I)
         og_img = re.search(r'<meta[^>]+property=["\']og:image["\'][^>]+content=["\']([^"\']+)["\']', page_html, re.I)
 
         if og_title:
-            t = clean_text(og_title.group(1))
-            info["title"] = re.sub(r"\s*\|\s*부크크.*$", "", t).strip()
-
-        fallback_og_desc = ""
-        if og_desc:
-            d = clean_text(og_desc.group(1))
-            if len(d) > 15:
-                fallback_og_desc = d
-
+            info["title"] = re.sub(r"\s*\|\s*부크크.*$", "", clean_text(og_title.group(1))).strip()
+        if og_desc and len(clean_text(og_desc.group(1))) > 15:
+            info["summary"] = clean_text(og_desc.group(1))
         if og_img:
             img_url = html.unescape(og_img.group(1)).strip()
             info["cover_url"] = ("https:" + img_url) if img_url.startswith("//") else img_url
+    except Exception as e2:
+        print(f"[WARN] Static fallback also failed ({bookk_url}): {e2}")
 
-        info["summary"] = extract_bookk_summary(page_html, next_data, fallback_og_desc)
-        info["toc"] = extract_bookk_toc(page_html, next_data)
-
-    except Exception as e:
-        print(f"[WARN] Failed to fetch Bookk page ({bookk_url}): {e}")
     return info
 
 
@@ -391,7 +345,7 @@ def build_dataset() -> dict:
     books_output = []
 
     for seed in BOOKS_SEED:
-        bookk_info = fetch_bookk_details(seed["bookk_url"])
+        bookk_info = fetch_bookk_details_with_playwright(seed["bookk_url"])
         time.sleep(random.uniform(0.8, 1.5))
 
         resolved_title = (bookk_info["title"] or seed["query"] or seed["fallback_title"]).strip()
@@ -456,4 +410,4 @@ if __name__ == "__main__":
     dataset = build_dataset()
     with open("data/books_data.json", "w", encoding="utf-8") as f:
         json.dump(dataset, f, ensure_ascii=False, indent=2)
-    print("Updated data/books_data.json with Bookk title, full summary, and TOC.")
+    print("Updated data/books_data.json automatically with Playwright.")
