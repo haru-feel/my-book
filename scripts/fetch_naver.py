@@ -14,7 +14,8 @@ BOOKS_SEED = [
         "bookk_id": "6b0590cade1ad179312a4036",
         "bookk_url": "https://bookk.co.kr/bookStore/6b0590cade1ad179312a4036",
         "query": "말이 줄어든 자리에 남는 것들",
-        "required_text": "말이줄어든자리에남는것들",
+        "required_phrases": ["말이 줄어든 자리에 남는 것들", "말이줄어든자리에남는것들"],
+        "require_author_or_book": False,
         "fallback_title": "말이 줄어든 자리에 남는 것들",
         "author": "김현승",
         "cover_url": "",
@@ -30,7 +31,8 @@ BOOKS_SEED = [
         "bookk_id": "67b32cdd74f2ff3eee47f6b1",
         "bookk_url": "https://bookk.co.kr/bookStore/67b32cdd74f2ff3eee47f6b1",
         "query": "멈춰서 돌아본다",
-        "required_text": "멈춰서돌아본다",
+        "required_phrases": ["멈춰서 돌아본다", "멈춰서돌아본다"],
+        "require_author_or_book": True,
         "fallback_title": "멈춰서 돌아본다",
         "author": "김현승",
         "cover_url": "",
@@ -45,11 +47,12 @@ BOOKS_SEED = [
         "bookk_id": "646abe734222b24502d39197",
         "bookk_url": "https://bookk.co.kr/bookStore/646abe734222b24502d39197",
         "query": "하루가 행복할 수 있다면",
-        "required_text": "하루가행복할수있다면",
+        "required_phrases": ["하루가 행복할 수 있다면", "하루가행복할수있다면"],
+        "require_author_or_book": True,
         "fallback_title": "하루가 행복할 수 있다면",
         "author": "김현승",
         "cover_url": "",
-        "summary": "하루가 지나면 아는게 많아질 줄 알았는데, 하루가 지나면서 알고 싶은게 많아진다. 나이가 들면 모든게 이해될 줄 알았는데 나이가 들면서 이해해야 할 것들이 많아진다..",
+        "summary": "하루가 지나면 아는게 많아질 줄 알았는데, 하루가 지나면서 알고 싶은게 많아진다. 나이가 들면 모든게 이해될 줄 알았는데 나이가 들면서 이해해야 할 것들이 많아진다. 시간이 지나면 자연스레 바뀔 줄 알았는데...",
         "toc": ["시작하며", "첫 번째 기록", "두 번째 기록", "마치며"],
         "excerpts": [
             "조용한 기록은 시간이 흐를수록 선명한 지도가 된다."
@@ -68,23 +71,44 @@ HEADERS = {
     "Referer": "https://www.naver.com/"
 }
 
-NOISE_WORDS = (
-    "로그인", "회원가입", "고객센터", "이용약관", "개인정보처리방침",
-    "검색옵션", "블로그 내 검색", "카페 내 검색", "뉴스검색", "연관검색어",
-    "이전 페이지", "다음 페이지", "전체보기", "장바구니", "바로구매", "찜하기"
+BLOCKED_DOMAINS = (
+    "naver.com/search",
+    "search.naver.com",
+    "help.naver.com",
+    "keep.naver.com",
+    "nid.naver.com",
+    "m.naver.com/shorts",
+    "clip.naver.com"
+)
+
+BLOCKED_TITLES = (
+    "새 창 열림",
+    "keep에 바로가기",
+    "keep에 저장",
+    "네이버뉴스",
+    "블로그",
+    "카페"
+)
+
+BOOK_CONTEXT_KEYWORDS = (
+    "김현승", "부크크", "bookk", "출간", "저자", "작가",
+    "시집", "에세이", "도서", "책", "독서", "서평", "리뷰", "후기",
+    "yes24", "알라딘", "교보문고"
 )
 
 
 def clean_text(raw_html: str) -> str:
     if not raw_html:
         return ""
-    no_tags = re.sub(r"<[^>]+>", " ", raw_html)
-    unescaped = html.unescape(no_tags)
-    return re.sub(r"\s+", " ", unescaped).strip()
+    # 잘린 태그 조각(<div..., ...class="...">)까지 함께 제거
+    no_tags = re.sub(r"<[^>]*>", " ", raw_html)
+    no_broken_prefix = re.sub(r"^[^<]*>", " ", no_tags)
+    unescaped = html.unescape(no_broken_prefix)
+    cleaned = re.sub(r"(Keep에 바로가기|Keep에 저장|새 창 열림)", " ", unescaped)
+    return re.sub(r"\s+", " ", cleaned).strip()
 
 
-def normalize_for_match(text: str) -> str:
-    """공백과 특수문자를 제거해 붙여쓴 형태('말이줄어든자리에남는것들' 등)로 정규화합니다."""
+def normalize_compact(text: str) -> str:
     return re.sub(r"[\s\W_]+", "", text or "").lower()
 
 
@@ -96,14 +120,8 @@ def fetch_html(url: str, timeout: int = 15) -> str:
 
 
 def extract_toc_from_html(page_html: str) -> list[str]:
-    """부크크 상세 페이지 HTML에서 '목차' 항목들을 추출합니다."""
     candidates: list[str] = []
-
-    toc_block_match = re.search(
-        r"(?:목차|차례)[\s\S]{0,4000}",
-        page_html,
-        re.IGNORECASE
-    )
+    toc_block_match = re.search(r"(?:목차|차례)[\s\S]{0,4000}", page_html, re.IGNORECASE)
     if toc_block_match:
         block = toc_block_match.group(0)
         block_with_breaks = re.sub(
@@ -117,103 +135,74 @@ def extract_toc_from_html(page_html: str) -> list[str]:
             line = re.sub(r"\s+", " ", raw_line).strip()
             if not line or line in ("목차", "차례"):
                 continue
-            if any(nw in line for nw in NOISE_WORDS):
-                continue
             if 2 <= len(line) <= 90 and line not in candidates:
                 candidates.append(line)
             if len(candidates) >= 20:
                 break
-
-    if not candidates:
-        json_toc_matches = re.findall(
-            r'["\']?(?:toc|tableOfContents|index|목차)["\']?\s*[:=]\s*["\']([^"\']{10,2000})["\']',
-            page_html,
-            re.IGNORECASE
-        )
-        for matched in json_toc_matches:
-            decoded = matched.encode("utf-8").decode("unicode_escape", errors="ignore")
-            decoded = html.unescape(decoded).replace("\\n", "\n")
-            for raw_line in decoded.splitlines():
-                line = re.sub(r"\s+", " ", raw_line).strip()
-                if 2 <= len(line) <= 90 and line not in ("목차", "차례") and line not in candidates:
-                    if not any(nw in line for nw in NOISE_WORDS):
-                        candidates.append(line)
-                if len(candidates) >= 20:
-                    break
-            if candidates:
-                break
-
     return candidates
 
 
 def fetch_bookk_details(bookk_url: str) -> dict:
-    """부크크 상세 페이지에서 공개된 제목, 소개, 표지, 목차 정보를 추출합니다."""
-    info = {
-        "title": "",
-        "summary": "",
-        "cover_url": "",
-        "toc": []
-    }
+    info = {"title": "", "summary": "", "cover_url": "", "toc": []}
     try:
         page_html = fetch_html(bookk_url)
-
-        og_title = re.search(
-            r'<meta[^>]+property=["\']og:title["\'][^>]+content=["\']([^"\']+)["\']',
-            page_html,
-            re.I
-        )
-        og_desc = re.search(
-            r'<meta[^>]+property=["\']og:description["\'][^>]+content=["\']([^"\']+)["\']',
-            page_html,
-            re.I
-        )
-        og_img = re.search(
-            r'<meta[^>]+property=["\']og:image["\'][^>]+content=["\']([^"\']+)["\']',
-            page_html,
-            re.I
-        )
+        og_title = re.search(r'<meta[^>]+property=["\']og:title["\'][^>]+content=["\']([^"\']+)["\']', page_html, re.I)
+        og_desc = re.search(r'<meta[^>]+property=["\']og:description["\'][^>]+content=["\']([^"\']+)["\']', page_html, re.I)
+        og_img = re.search(r'<meta[^>]+property=["\']og:image["\'][^>]+content=["\']([^"\']+)["\']', page_html, re.I)
 
         if og_title:
             t = clean_text(og_title.group(1))
-            t = re.sub(r"\s*\|\s*부크크.*$", "", t).strip()
-            info["title"] = t
-
+            info["title"] = re.sub(r"\s*\|\s*부크크.*$", "", t).strip()
         if og_desc:
             d = clean_text(og_desc.group(1))
             if len(d) > 15:
                 info["summary"] = d
-
         if og_img:
             img_url = html.unescape(og_img.group(1)).strip()
-            if img_url.startswith("//"):
-                img_url = "https:" + img_url
-            info["cover_url"] = img_url
+            info["cover_url"] = ("https:" + img_url) if img_url.startswith("//") else img_url
 
         info["toc"] = extract_toc_from_html(page_html)
-
     except Exception as e:
         print(f"[WARN] Failed to fetch Bookk page ({bookk_url}): {e}")
-
     return info
 
 
-def contains_required_text(title: str, snippet: str, required_text: str) -> bool:
-    """지정된 책 문구('말이줄어든자리에남는것들' 등)가 무조건 포함되었는지 검사합니다."""
-    target = normalize_for_match(required_text)
-    if not target:
+def is_valid_book_item(
+    title: str,
+    snippet: str,
+    required_phrases: list[str],
+    require_author_or_book: bool
+) -> bool:
+    if not title or len(title) < 4:
+        return False
+    if title.lower() in BLOCKED_TITLES:
         return False
 
-    combined_raw = f"{title} {snippet}"
-    if any(nw in combined_raw for nw in NOISE_WORDS):
+    combined = f"{title} {snippet}"
+    compact_combined = normalize_compact(combined)
+
+    # 1) 지정된 책 제목 어구가 연속으로 포함되었는지 검사
+    phrase_matched = any(
+        normalize_compact(p) in compact_combined
+        for p in required_phrases
+        if p
+    )
+    if not phrase_matched:
         return False
 
-    norm_combined = normalize_for_match(combined_raw)
-    return target in norm_combined
+    # 2) 일반 문구와 겹칠 수 있는 제목은 작가명('김현승')이나 책/출판 관련 키워드 동반 필수
+    if require_author_or_book:
+        lower_combined = combined.lower()
+        if not any(kw in lower_combined for kw in BOOK_CONTEXT_KEYWORDS):
+            return False
+
+    return True
 
 
 def parse_naver_results(
     page_html: str,
-    required_text: str,
+    required_phrases: list[str],
+    require_author_or_book: bool,
     limit: int = 8,
     domain_filter: str | None = None
 ) -> list[dict]:
@@ -229,29 +218,27 @@ def parse_naver_results(
         href = html.unescape(match.group(1)).strip()
         title = clean_text(match.group(2))
 
-        if not title or len(title) < 2:
-            continue
-        if href.startswith("https://search.naver.com") or href.startswith("https://help.naver.com"):
+        if any(bd in href for bd in BLOCKED_DOMAINS):
             continue
         if domain_filter and domain_filter not in href:
             continue
         if href in seen_urls:
             continue
 
-        start = max(0, match.start() - 250)
-        end = min(len(page_html), match.end() + 900)
+        start = max(0, match.start() - 120)
+        end = min(len(page_html), match.end() + 700)
         context_block = clean_text(page_html[start:end])
         snippet = context_block.replace(title, "", 1).strip()
-        if len(snippet) > 220:
-            snippet = snippet[:220].rsplit(" ", 1)[0] + "..."
+        if len(snippet) > 200:
+            snippet = snippet[:200].rsplit(" ", 1)[0] + "..."
 
-        if not contains_required_text(title, snippet, required_text):
+        if not is_valid_book_item(title, snippet, required_phrases, require_author_or_book):
             continue
 
         seen_urls.add(href)
         results.append({
             "title": title,
-            "snippet": snippet or f"'{required_text}' 문구가 포함된 검색 결과입니다.",
+            "snippet": snippet,
             "blogger": "네이버 블로그" if domain_filter == "blog.naver.com" else "네이버 검색",
             "date": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
             "link": href
@@ -265,7 +252,8 @@ def parse_naver_results(
 
 def search_naver_web(
     query: str,
-    required_text: str,
+    required_phrases: list[str],
+    require_author_or_book: bool,
     where: str = "nexearch",
     limit: int = 8,
     domain_filter: str | None = None
@@ -276,7 +264,8 @@ def search_naver_web(
         page_html = fetch_html(url)
         return parse_naver_results(
             page_html,
-            required_text=required_text,
+            required_phrases=required_phrases,
+            require_author_or_book=require_author_or_book,
             limit=limit,
             domain_filter=domain_filter
         )
@@ -294,30 +283,34 @@ def build_dataset() -> dict:
         time.sleep(random.uniform(0.8, 1.5))
 
         resolved_title = (seed["query"] or seed["fallback_title"]).strip()
-        required_text = seed["required_text"]
+        required_phrases = seed["required_phrases"]
+        require_ctx = seed["require_author_or_book"]
 
-        # 1) 블로그 검색 + 통합검색에서 지정 문구 포함 항목만 수집
+        # 1) 블로그 리뷰/소개 수집 (작가명 함께 검색해 정확도 향상)
         blog_items = search_naver_web(
-            f'"{resolved_title}"',
-            required_text=required_text,
+            f'"{resolved_title}" "김현승"',
+            required_phrases=required_phrases,
+            require_author_or_book=require_ctx,
             where="blog",
             limit=8,
             domain_filter="blog.naver.com"
         )
         if not blog_items:
             blog_items = search_naver_web(
-                f'"{resolved_title}"',
-                required_text=required_text,
+                f'"{resolved_title}" "김현승"',
+                required_phrases=required_phrases,
+                require_author_or_book=require_ctx,
                 where="nexearch",
                 limit=8
             )
 
         time.sleep(random.uniform(1.0, 2.0))
 
-        # 2) 뉴스 검색에서 지정 문구 포함 항목만 수집
+        # 2) 언론 보도 수집
         news_items = search_naver_web(
-            f'"{resolved_title}"',
-            required_text=required_text,
+            f'"{resolved_title}" "김현승"',
+            required_phrases=required_phrases,
+            require_author_or_book=require_ctx,
             where="news",
             limit=6
         )
@@ -353,4 +346,4 @@ if __name__ == "__main__":
     dataset = build_dataset()
     with open("data/books_data.json", "w", encoding="utf-8") as f:
         json.dump(dataset, f, ensure_ascii=False, indent=2)
-    print("Overwrote data/books_data.json cleanly with strict required_text matching.")
+    print("Cleanly updated data/books_data.json.")
